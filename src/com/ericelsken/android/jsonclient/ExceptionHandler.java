@@ -1,4 +1,4 @@
-package com.elskene.android.web;
+package com.ericelsken.android.jsonclient;
 
 import android.content.Context;
 

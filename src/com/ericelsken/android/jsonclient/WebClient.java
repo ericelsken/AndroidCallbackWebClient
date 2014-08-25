@@ -1,4 +1,4 @@
-package com.elskene.android.web;
+package com.ericelsken.android.jsonclient;
 
 import java.io.InputStreamReader;
 import java.util.Date;
