@@ -1,0 +1,8 @@
+#ignore generated and computer specific files.
+bin/*
+gen/*
+proguard-project.txt
+project.properties
+.classpath
+.project
+
