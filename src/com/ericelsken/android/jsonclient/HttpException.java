@@ -1,6 +1,5 @@
 package com.ericelsken.android.jsonclient;
 
-import org.json.JSONObject;
 
 public class HttpException extends Exception {
 	
@@ -8,13 +7,13 @@ public class HttpException extends Exception {
 	
 	private final int mStatus;
 	private final String mReason;
-	private final JSONObject mJson;
+	private final String mBody;
 
-	public HttpException(int status, String reason, JSONObject json) {
-		super("Reason: " + reason + " Status: " + status + " Response: " + json.toString());
+	public HttpException(int status, String reason, String body) {
+		super("Reason: " + reason + ", Status: " + status + ", Response: " + body);
 		mStatus = status;
 		mReason = reason;
-		mJson = json;
+		mBody = body;
 	}
 	
 	public int getStatus() {
@@ -25,8 +24,8 @@ public class HttpException extends Exception {
 		return mReason;
 	}
 	
-	public JSONObject getJsonResponse() {
-		return mJson;
+	public String getBody() {
+		return mBody;
 	}
 	
 	public boolean isServerError() {

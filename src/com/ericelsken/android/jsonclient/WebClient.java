@@ -69,32 +69,29 @@ public final class WebClient {
 		mCookieStore.clearExpired(new Date());
 		httpClient.setCookieStore(mCookieStore);
 		HttpResponse response = httpClient.execute(request);
-		JSONObject responseObj = entityToJson(response.getEntity());
+		final String body = entityToString(response.getEntity());
 		StatusLine status = response.getStatusLine();
-		int code = status.getStatusCode() / 100;
+		final int code = status.getStatusCode() / 100;
 		if(code >= 4 && code <= 5) {
-			throw new HttpException(status.getStatusCode(), status.getReasonPhrase(), responseObj);
-		}
-		return responseObj;
+			throw new HttpException(status.getStatusCode(), status.getReasonPhrase(), body);
+		}		
+		return new JSONObject(body);
 	}
 	
-	private static JSONObject entityToJson(HttpEntity entity) throws Exception {
+	private static String entityToString(HttpEntity entity) throws Exception {
 		int tempRead = 0;
 		char[] buffer = new char[sBufferSize];
-		StringBuilder jsonBuilder = new StringBuilder();
+		StringBuilder builder = new StringBuilder();
 		InputStreamReader reader = new InputStreamReader(entity.getContent(), sCharSet);
 		while(tempRead != -1) {
 			tempRead = reader.read(buffer, 0, buffer.length); //attempts to fill the buffer. returns how many chars are actually read.
 			if(tempRead < 0) {
 				break;
 			}
-			jsonBuilder.append(buffer, 0, tempRead);
+			builder.append(buffer, 0, tempRead);
 		}
 		reader.close();
-		if(jsonBuilder.length() == 0) {
-			return null; //if the response is empty, then return null to denote nothing was sent back from the service.
-		}
-		return new JSONObject(jsonBuilder.toString());
+		return builder.toString();
 	}
 	
 	public static String makeUri(String serverUrl, String appendedUri) {
