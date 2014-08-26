@@ -53,31 +53,31 @@ public class RequestManager {
 		mArray.delete(id);
 	}
 	
-	public RequestHandler createDeleteRequest(int id, Context context, String uri, RequestCallback callback) {
-		return createRequest(id, context, uri, RequestHandler.DELETE, null, callback);
-	}
-	
-	public RequestHandler createGetRequest(int id, Context context, String uri, RequestCallback callback) {
-		return createRequest(id, context, uri, RequestHandler.GET, null, callback);
-	}
-	
-	public RequestHandler createPostRequest(int id, Context context, String uri, JSONObject json, RequestCallback callback) {
-		return createRequest(id, context, uri, RequestHandler.POST, json, callback);
-	}
-	
-	public RequestHandler createPutRequest(int id, Context context, String uri, JSONObject json, RequestCallback callback) {
-		return createRequest(id, context, uri, RequestHandler.PUT, json, callback);
-	}
-	
-	private RequestHandler createRequest(int id, Context context, String uri, int method, JSONObject json, RequestCallback callback) {
-		RequestHandler rh = mArray.get(id);
-		if(rh != null) {
-			return rh;
-		}
-		rh = new RequestHandler(id, context, this, mWebClient, mExceptionHandler, uri, method, json, callback);
-		mArray.append(id, rh);
-		return rh;
-	}
+//	public RequestHandler createDeleteRequest(Context context, int id, String uri, RequestCallback callback) {
+//		return createRequest(id, context, uri, RequestHandler.DELETE, null, callback);
+//	}
+//	
+//	public RequestHandler createGetRequest(Context context, int id, String uri, RequestCallback callback) {
+//		return createRequest(id, context, uri, RequestHandler.GET, null, callback);
+//	}
+//	
+//	public RequestHandler createPostRequest(Context context, int id, String uri, JSONObject json, RequestCallback callback) {
+//		return createRequest(id, context, uri, RequestHandler.POST, json, callback);
+//	}
+//	
+//	public RequestHandler createPutRequest(Context context, int id, String uri, JSONObject json, RequestCallback callback) {
+//		return createRequest(id, context, uri, RequestHandler.PUT, json, callback);
+//	}
+//	
+//	private RequestHandler createRequest(int id, Context context, String uri, int method, JSONObject json, RequestCallback callback) {
+//		RequestHandler rh = mArray.get(id);
+//		if(rh != null) {
+//			return rh;
+//		}
+//		rh = new RequestHandler(context, id, this, mWebClient, mExceptionHandler, uri, method, json, callback);
+//		mArray.append(id, rh);
+//		return rh;
+//	}
 	
 	public void setCallback(int id, RequestCallback callback) {
 		RequestHandler rh = mArray.get(id);

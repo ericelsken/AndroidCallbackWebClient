@@ -10,7 +10,7 @@ public interface RequestCallback {
 	
 	public void onRequestSuccess(int id, JSONObject json);
 	
-	public boolean onRequestException(int id, Exception ex);
+	public boolean onRequestException(int id, Exception ex, boolean handled);
 	
 	public void onRequestFinally(int id, boolean cancelled);
 }

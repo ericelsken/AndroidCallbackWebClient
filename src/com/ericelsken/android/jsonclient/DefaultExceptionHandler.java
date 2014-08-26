@@ -8,7 +8,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
 	private static final String TAG	= DefaultExceptionHandler.class.getSimpleName();
 	
 	@Override
-	public boolean handleException(int id, Exception ex, Context context) {
+	public boolean handleException(Context context, int id, Exception ex) {
 		Log.e(TAG, "Exception not handled (logged by default) with request id " + id, ex);
 		return false;
 	}

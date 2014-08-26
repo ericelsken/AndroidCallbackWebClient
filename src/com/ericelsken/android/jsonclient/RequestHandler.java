@@ -12,29 +12,30 @@ public class RequestHandler {
 	public static final int POST = 2;
 	public static final int PUT = 3;
 	
-	private final int id;
 	private final Context context;
+	private final int id;
 	private final RequestManager manager;
-	private final WebClient webClient;
 	private final RequestTask task;
-	private final ExceptionHandler exceptionHandler;
-	private final String uri;
-	private final int method;
-	private final JSONObject data;
 	private RequestCallback callback;
+
+	private WebClient webClient;
+	private ExceptionHandler exceptionHandler;
+	private String uri;
+	private int method;
+	private JSONObject data;
 	
-	public RequestHandler(int id, Context context, RequestManager manager, WebClient webClient, ExceptionHandler exceptionHandler,
-			String uri, int method, JSONObject data, RequestCallback callback) {
-		this.id = id;
+	public RequestHandler(Context context, int id, String uri, RequestCallback rc) {
 		this.context = context;
-		this.manager = manager;
-		this.webClient = webClient;
+		this.id = id;
+		this.manager = RequestManager.getInstance();
 		this.task = new RequestTask();
-		this.exceptionHandler = exceptionHandler;
+		this.callback = rc;
+		
+		webClient = this.manager.getWebClient();
+		this.exceptionHandler = this.manager.getExceptionHandler();
 		this.uri = uri;
-		this.method = method;
-		this.data = data;
-		this.callback = callback;
+		this.method = GET;
+		this.data = null;
 	}
 	
 	public void setRequestCallback(RequestCallback callback) {
@@ -52,12 +53,11 @@ public class RequestHandler {
 	}
 	
 	private void handleException(Exception ex) {
-		boolean handled = callback.onRequestException(id, ex);
-		if(!handled) {
-			if(exceptionHandler != null) {
-				exceptionHandler.handleException(id, ex, context);
-			}
+		boolean handled = false;
+		if(exceptionHandler != null) {
+			handled = exceptionHandler.handleException(context, id, ex);
 		}
+		callback.onRequestException(id, ex, handled);
 	}
 
 	private class RequestTask extends AsyncTask<Void, Void, Object> {
@@ -171,5 +171,20 @@ public class RequestHandler {
 		return data;
 	}
 	
-	
+	public class Builder {
+		private final RequestHandler result;
+		
+		public Builder(Context ctx, int id, String uri, RequestCallback rc) {
+			result = new RequestHandler(ctx, id, uri, rc);
+		}
+		
+		public Builder get() {
+			result.method = GET;
+			return this;
+		}
+		
+		public RequestHandler create() {
+			return result;
+		}
+	}
 }
