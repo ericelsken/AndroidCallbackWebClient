@@ -1,7 +1,5 @@
 package com.ericelsken.android.jsonclient;
 
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -22,7 +20,8 @@ public class RequestHandler {
 	private ExceptionHandler exceptionHandler;
 	private String uri;
 	private int method;
-	private JSONObject data;
+	private String data;
+	private String responseBody;
 	
 	public RequestHandler(Context context, int id, String uri, RequestCallback rc) {
 		this.context = context;
@@ -36,6 +35,7 @@ public class RequestHandler {
 		this.uri = uri;
 		this.method = GET;
 		this.data = null;
+		this.responseBody = null;
 	}
 	
 	public void setRequestCallback(RequestCallback callback) {
@@ -87,12 +87,17 @@ public class RequestHandler {
 		protected void onPostExecute(Object result) {
 			super.onPostExecute(result);
 			callback.onRequestDone(id, false);
-			if(result == null || result instanceof JSONObject) {
-				callback.onRequestSuccess(id, (JSONObject) result);
+			if(result == null || result instanceof String) {
+				responseBody = (String) result;
+				try {
+					callback.onRequestSuccess(id, responseBody);
+				} catch (Exception ex) {
+					handleException(ex);
+				}
 			} else if(result instanceof Exception) {
 				handleException((Exception) result);
 			} else {
-				handleException(new IllegalArgumentException("Response must be an instance of either " + JSONObject.class.getName() + " or Exception."));
+				handleException(new IllegalArgumentException("Response must be an instance of either " + String.class.getName() + " or Exception."));
 			}
 			callback.onRequestFinally(id, false);
 			manager.removeRequest(id);
@@ -167,24 +172,28 @@ public class RequestHandler {
 	/**
 	 * @return the data
 	 */
-	public JSONObject getData() {
+	public String getData() {
 		return data;
 	}
 	
-	public class Builder {
-		private final RequestHandler result;
-		
-		public Builder(Context ctx, int id, String uri, RequestCallback rc) {
-			result = new RequestHandler(ctx, id, uri, rc);
-		}
-		
-		public Builder get() {
-			result.method = GET;
-			return this;
-		}
-		
-		public RequestHandler create() {
-			return result;
-		}
+	public String getResponseBody() {
+		return responseBody;
 	}
+	
+//	public class Builder {
+//		private final RequestHandler result;
+//		
+//		public Builder(Context ctx, int id, String uri, RequestCallback rc) {
+//			result = new RequestHandler(ctx, id, uri, rc);
+//		}
+//		
+//		public Builder get() {
+//			result.method = GET;
+//			return this;
+//		}
+//		
+//		public RequestHandler create() {
+//			return result;
+//		}
+//	}
 }

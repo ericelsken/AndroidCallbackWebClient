@@ -18,8 +18,6 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.net.Uri;
 
@@ -31,9 +29,16 @@ public final class WebClient {
 	private static final int DEFAULT_BUFFER_SIZE = 1 << 10;
 	
 	/**
+	 * Default character set to use when encoding/decoding the HTTP body. 
+	 */
+	public static final String DEFAULT_CHAR_SET = "UTF-8";
+	
+	private String mBaseUrl;
+	
+	/**
 	 * The name of the character set to use when reading/writing to server.
 	 */
-	private String mCharSet = "UTF-8";
+	private String mCharSet;
 	
 	/**
 	 * The size of the buffer to use when reading from the server.
@@ -44,46 +49,69 @@ public final class WebClient {
 	 * CookieStore for this instance of a WebClient. All in memory and no persistent storage yet.
 	 */
 	private CookieStore mCookieStore;
-	
+
 	public WebClient() {
 		mCookieStore = new BasicCookieStore();
+		mBaseUrl = "";
+		mCharSet = DEFAULT_CHAR_SET;
+		mBufferSize = DEFAULT_BUFFER_SIZE;
 	}
 	
-	public synchronized CookieStore getCookieStore() {
+	public CookieStore getCookieStore() {
 		return mCookieStore;
 	}
 	
-	public synchronized void setCookieStore(CookieStore store) {
+	public void setCookieStore(CookieStore store) {
 		mCookieStore = store;
 	}
 	
-	public synchronized JSONObject executeDelete(String uri) throws ClientProtocolException, IOException, HttpException, JSONException {
-		HttpDelete request = new HttpDelete(uri);
-		return makeJsonRequest(request);
+	public String getCharacterSet() {
+		return mCharSet;
 	}
 	
-	public synchronized JSONObject executeGet(String uri) throws ClientProtocolException, IOException, HttpException, JSONException {
-		HttpGet request = new HttpGet(uri);
-		return makeJsonRequest(request);
+	public void setCharacterSet(String charSet) {
+		mCharSet = charSet;
 	}
 	
-	public synchronized JSONObject executePost(String uri, JSONObject json) throws ClientProtocolException, IOException, HttpException, JSONException {
-		HttpPost request = new HttpPost(uri);
-		String jsonStr = json.toString();
-		StringEntity entity = new StringEntity(jsonStr, mCharSet);
-		request.setEntity(entity);
-		return makeJsonRequest(request);
+	public String getBaseUrl() {
+		return mBaseUrl;
 	}
 	
-	public synchronized JSONObject executePut(String uri, JSONObject json) throws ClientProtocolException, IOException, HttpException, JSONException {
-		HttpPut request = new HttpPut(uri);
-		String jsonStr = json.toString();
-		StringEntity entity = new StringEntity(jsonStr, mCharSet);
-		request.setEntity(entity);
-		return makeJsonRequest(request);
+	public void setBaseUrl(String baseUrl) {
+		mBaseUrl = baseUrl;
 	}
 	
-	private synchronized JSONObject makeJsonRequest(HttpRequestBase request) throws ClientProtocolException, IOException, HttpException, JSONException {
+	public int getBufferSize() {
+		return mBufferSize;
+	}
+	
+	public void setBufferSize(int bufferSize) {
+		mBufferSize = bufferSize;
+	}
+	
+	public String executeDelete(String uri) throws ClientProtocolException, IOException, HttpException {
+		HttpDelete request = new HttpDelete(mBaseUrl + uri);
+		return makeRequest(request);
+	}
+	
+	public String executeGet(String uri) throws ClientProtocolException, IOException, HttpException {
+		HttpGet request = new HttpGet(mBaseUrl + uri);
+		return makeRequest(request);
+	}
+	
+	public String executePost(String uri, String data) throws ClientProtocolException, IOException, HttpException {
+		HttpPost request = new HttpPost(mBaseUrl + uri);
+		request.setEntity(new StringEntity(data, mCharSet));
+		return makeRequest(request);
+	}
+	
+	public String executePut(String uri, String data) throws ClientProtocolException, IOException, HttpException {
+		HttpPut request = new HttpPut(mBaseUrl + uri);
+		request.setEntity(new StringEntity(data, mCharSet));
+		return makeRequest(request);
+	}
+	
+	private synchronized String makeRequest(HttpRequestBase request) throws ClientProtocolException, IOException, HttpException {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		mCookieStore.clearExpired(new Date());
 		httpClient.setCookieStore(mCookieStore);
@@ -93,8 +121,8 @@ public final class WebClient {
 		final int code = status.getStatusCode() / 100;
 		if(code >= 4 && code <= 5) {
 			throw new HttpException(status.getStatusCode(), status.getReasonPhrase(), body);
-		}		
-		return new JSONObject(body);
+		}
+		return body;
 	}
 	
 	private static String entityToString(HttpEntity entity, int bufferSize, String charSet) throws UnsupportedEncodingException, IllegalStateException, IOException {
@@ -106,7 +134,7 @@ public final class WebClient {
 		StringBuilder builder = new StringBuilder();
 		InputStreamReader reader = new InputStreamReader(entity.getContent(), charSet);
 		while(tempRead != -1) {
-			tempRead = reader.read(buffer, 0, buffer.length); //attempts to fill the buffer. returns how many chars are actually read.
+			tempRead = reader.read(buffer, 0, buffer.length); //attempts to fill the buffer. returns how many chars were actually read.
 			if(tempRead < 0) {
 				break;
 			}
@@ -116,8 +144,8 @@ public final class WebClient {
 		return builder.toString();
 	}
 	
-	public static String makeUri(String serverUrl, String appendedUri) {
-		return Uri.withAppendedPath(Uri.parse(serverUrl), appendedUri).toString();
+	public static String makeUri(String baseUrl, String appendedUri) {
+		return Uri.withAppendedPath(Uri.parse(baseUrl), appendedUri).toString();
 	}
 	
 	private static String appendQuery(String base, String query) {

@@ -1,6 +1,5 @@
 package com.ericelsken.android.jsonclient;
 
-import org.json.JSONObject;
 
 public interface RequestCallback {
 	
@@ -8,7 +7,7 @@ public interface RequestCallback {
 	
 	public void onRequestDone(int id, boolean cancelled);
 	
-	public void onRequestSuccess(int id, JSONObject json);
+	public void onRequestSuccess(int id, String body) throws Exception;
 	
 	public boolean onRequestException(int id, Exception ex, boolean handled);
 	
