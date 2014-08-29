@@ -1,4 +1,4 @@
-package com.ericelsken.android.jsonclient;
+package com.ericelsken.android.webclient;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

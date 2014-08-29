@@ -1,4 +1,4 @@
-package com.ericelsken.android.jsonclient;
+package com.ericelsken.android.webclient;
 
 import android.content.Context;
 import android.os.AsyncTask;
