@@ -10,6 +10,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -33,6 +34,9 @@ public final class WebClient {
 	 */
 	public static final String DEFAULT_CHAR_SET = "UTF-8";
 	
+	/**
+	 * The base URL to which all URI's are appended before making requests.
+	 */
 	private String mBaseUrl;
 	
 	/**
@@ -115,14 +119,18 @@ public final class WebClient {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		mCookieStore.clearExpired(new Date());
 		httpClient.setCookieStore(mCookieStore);
-		HttpResponse response = httpClient.execute(request);
-		final String body = entityToString(response.getEntity(), mBufferSize, mCharSet);
-		StatusLine status = response.getStatusLine();
-		final int code = status.getStatusCode() / 100;
-		if(code >= 4 && code <= 5) {
-			throw new HttpException(status.getStatusCode(), status.getReasonPhrase(), body);
+		try {
+			HttpResponse response = httpClient.execute(request);
+			StatusLine status = response.getStatusLine();
+			final String body = entityToString(response.getEntity(), mBufferSize, mCharSet);
+			final int code = status.getStatusCode() / 100;
+			if(code >= 4 && code <= 5) {
+				throw new HttpException(status.getStatusCode(), body);
+			}
+			return body;
+		} catch (ClientProtocolException ex) {
+			return null;
 		}
-		return body;
 	}
 	
 	private static String entityToString(HttpEntity entity, int bufferSize, String charSet) throws UnsupportedEncodingException, IllegalStateException, IOException {
