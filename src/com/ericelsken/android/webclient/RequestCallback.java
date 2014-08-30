@@ -9,7 +9,7 @@ public interface RequestCallback {
 	
 	public void onRequestSuccess(int id, String body) throws Exception;
 	
-	public boolean onRequestException(int id, Exception ex, boolean handled);
+	public void onRequestException(int id, Exception ex, boolean handled);
 	
 	public void onRequestFinally(int id, boolean cancelled);
 }

@@ -24,6 +24,9 @@ public class RequestHandler {
 	private String responseBody;
 	
 	public RequestHandler(Context context, int id, String uri, RequestCallback rc) {
+		if(rc == null) {
+			throw new NullPointerException("RequestCallback parameter cannot be null.");
+		}
 		this.context = context;
 		this.id = id;
 		this.manager = RequestManager.getInstance();
@@ -38,8 +41,11 @@ public class RequestHandler {
 		this.responseBody = null;
 	}
 	
-	public void setRequestCallback(RequestCallback callback) {
-		this.callback = callback;
+	public void setRequestCallback(RequestCallback rc) {
+		if(rc == null) {
+			throw new NullPointerException("RequestCallback parameter cannot be null.");
+		}
+		this.callback = rc;
 	}
 	
 	public void start() {
@@ -180,20 +186,35 @@ public class RequestHandler {
 		return responseBody;
 	}
 	
-//	public class Builder {
-//		private final RequestHandler result;
-//		
-//		public Builder(Context ctx, int id, String uri, RequestCallback rc) {
-//			result = new RequestHandler(ctx, id, uri, rc);
-//		}
-//		
-//		public Builder get() {
-//			result.method = GET;
-//			return this;
-//		}
-//		
-//		public RequestHandler create() {
-//			return result;
-//		}
-//	}
+	public static class Builder {
+		private final RequestHandler result;
+		
+		public Builder(Context ctx, int id, String uri, RequestCallback rc) {
+			result = new RequestHandler(ctx, id, uri, rc);
+		}
+		
+		public Builder delete() {
+			result.method = DELETE;
+			return this;
+		}
+		
+		public Builder get() {
+			result.method = GET;
+			return this;
+		}
+		
+		public Builder post() {
+			result.method = POST;
+			return this;
+		}
+		
+		public Builder put() {
+			result.method = PUT;
+			return this;
+		}
+		
+		public RequestHandler create() {
+			return result;
+		}
+	}
 }
