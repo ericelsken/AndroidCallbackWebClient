@@ -1,19 +1,15 @@
 package com.ericelsken.android.web.content;
 
+import java.net.URI;
+
 import org.json.JSONObject;
 
 import android.content.Context;
 
-import com.ericelsken.android.webclient.WebClient;
-
 public class JsonWebClientLoader extends WebClientLoader<JSONObject> {
 	
-	public JsonWebClientLoader(Context context, String uri) {
+	public JsonWebClientLoader(Context context, URI uri) {
 		super(context, uri);
-	}
-
-	public JsonWebClientLoader(Context context, WebClient wc, String uri) {
-		super(context, wc, uri);
 	}
 
 	@Override

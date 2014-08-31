@@ -1,4 +1,4 @@
-package com.ericelsken.android.webclient;
+package com.ericelsken.android.web;
 
 
 public class HttpException extends Exception {

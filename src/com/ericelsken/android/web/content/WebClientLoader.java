@@ -5,25 +5,17 @@ import java.net.URI;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 
-import com.ericelsken.android.webclient.AndroidWebClient;
-import com.ericelsken.android.webclient.RequestManager;
-import com.ericelsken.android.webclient.WebClient;
+import com.ericelsken.android.web.WebClient;
 
 public abstract class WebClientLoader<E> extends AsyncTaskLoader<E> {
 	
-	private final WebClient mWebClient;
-	private final String mUri;
+	private final URI mURI;
 	private E mData;
 	private Exception mException;
-
-	public WebClientLoader(Context context, WebClient wc, String uri) {
-		super(context);
-		mWebClient = wc;
-		mUri = uri;
-	}
 	
-	public WebClientLoader(Context context, String uri) {
-		this(context, RequestManager.getInstance().getWebClient(), uri);
+	public WebClientLoader(Context context, URI uri) {
+		super(context);
+		mURI = uri;
 	}
 	
 	public boolean hasException() {
@@ -40,8 +32,7 @@ public abstract class WebClientLoader<E> extends AsyncTaskLoader<E> {
 	 */
 	public E loadInBackground() {
 		try {
-//			final String webResult = mWebClient.executeGet(mUri);
-			final String webResult = AndroidWebClient.getInstance().executePut(URI.create("http://example.com"), "some data");
+			final String webResult = WebClient.getInstance().executeGet(mURI);
 			E result = onUnmarshal(webResult);
 			mException = null; //no errors. delivering the result.
 			return result;

@@ -1,4 +1,4 @@
-package com.ericelsken.android.webclient;
+package com.ericelsken.android.web;
 
 import android.util.SparseArray;
 
@@ -12,18 +12,12 @@ public class RequestManager {
 		return InstanceHolder.sInstance;
 	}
 	
-	private final WebClient mWebClient;
 	private final SparseArray<RequestHandler> mArray;
 	private ExceptionHandler mExceptionHandler;
 	
 	private RequestManager() {
-		mWebClient = new WebClient();
 		mArray = new SparseArray<RequestHandler>();
 		mExceptionHandler = new DefaultExceptionHandler();
-	}
-	
-	public WebClient getWebClient() {
-		return mWebClient;
 	}
 	
 	public void setExceptionHandler(ExceptionHandler handler) {

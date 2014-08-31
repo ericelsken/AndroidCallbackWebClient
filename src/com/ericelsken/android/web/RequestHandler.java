@@ -1,4 +1,6 @@
-package com.ericelsken.android.webclient;
+package com.ericelsken.android.web;
+
+import java.net.URI;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -14,26 +16,29 @@ public class RequestHandler {
 	private final int id;
 	private final RequestManager manager;
 	private final RequestTask task;
+	private final URI uri;
 	private RequestCallback callback;
 
-	private WebClient webClient;
+	//Now begins the fields that can be set after object creation.
 	private ExceptionHandler exceptionHandler;
-	private String uri;
 	private int method;
 	private String data;
+	
 	private String responseBody;
 	
-	public RequestHandler(Context context, int id, String uri, RequestCallback rc) {
-		if(rc == null) {
-			throw new NullPointerException("RequestCallback parameter cannot be null.");
+	public RequestHandler(Context context, int id, URI uri, RequestCallback callback) {
+		if(callback == null) {
+			throw new NullPointerException("RequestCallback cannot be null.");
+		}
+		if(uri == null) {
+			throw new NullPointerException("URI cannot be null.");
 		}
 		this.context = context;
 		this.id = id;
 		this.manager = RequestManager.getInstance();
 		this.task = new RequestTask();
-		this.callback = rc;
+		this.callback = callback;
 		
-		webClient = this.manager.getWebClient();
 		this.exceptionHandler = this.manager.getExceptionHandler();
 		this.uri = uri;
 		this.method = GET;
@@ -76,6 +81,7 @@ public class RequestHandler {
 		@Override
 		protected Object doInBackground(Void... params) {
 			Object result = null;
+			final WebClient webClient = WebClient.getInstance();
 			try {
 				switch (method) {
 				case DELETE : result = webClient.executeDelete(uri); break;
@@ -127,9 +133,9 @@ public class RequestHandler {
 	}
 
 	/**
-	 * @return the uri
+	 * @return the URI of the request
 	 */
-	public String getUri() {
+	public URI getUri() {
 		return uri;
 	}
 
@@ -141,7 +147,7 @@ public class RequestHandler {
 	}
 
 	/**
-	 * @return the callback
+	 * @return the RequestCallback
 	 */
 	public RequestCallback getCallback() {
 		return callback;
@@ -159,13 +165,6 @@ public class RequestHandler {
 	 */
 	public Context getContext() {
 		return context;
-	}
-
-	/**
-	 * @return the webClient
-	 */
-	public WebClient getWebClient() {
-		return webClient;
 	}
 
 	/**
@@ -189,7 +188,7 @@ public class RequestHandler {
 	public static class Builder {
 		private final RequestHandler result;
 		
-		public Builder(Context ctx, int id, String uri, RequestCallback rc) {
+		public Builder(Context ctx, int id, URI uri, RequestCallback rc) {
 			result = new RequestHandler(ctx, id, uri, rc);
 		}
 		
@@ -210,6 +209,16 @@ public class RequestHandler {
 		
 		public Builder put() {
 			result.method = PUT;
+			return this;
+		}
+		
+		public Builder setData(String data) {
+			result.data = data;
+			return this;
+		}
+		
+		public Builder setExceptionHandler(ExceptionHandler handler) {
+			result.exceptionHandler = handler;
 			return this;
 		}
 		

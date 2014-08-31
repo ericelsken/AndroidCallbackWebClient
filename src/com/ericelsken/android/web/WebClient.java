@@ -1,4 +1,4 @@
-package com.ericelsken.android.webclient;
+package com.ericelsken.android.web;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -14,7 +14,7 @@ import java.net.URI;
 
 import android.os.Build;
 
-public class AndroidWebClient {
+public class WebClient {
 	
 	/**
 	 * Size of byte buffer to use when reading responses.
@@ -27,10 +27,10 @@ public class AndroidWebClient {
 	public static final String DEFAULT_CHAR_SET_NAME = "UTF-8";
 	
 	private static class InstanceHolder {
-		private static final AndroidWebClient sInstance = new AndroidWebClient();
+		private static final WebClient sInstance = new WebClient();
 	}
 	
-	public static AndroidWebClient getInstance() {
+	public static WebClient getInstance() {
 		return InstanceHolder.sInstance;
 	}
 	
@@ -38,7 +38,7 @@ public class AndroidWebClient {
 	
 	private int mBbufferSize;
 	
-	private AndroidWebClient() {
+	private WebClient() {
 		CookieHandler.setDefault(new CookieManager());
 		mCharSetName = DEFAULT_CHAR_SET_NAME;
 		mBbufferSize = DEFAULT_BUFFER_SIZE;
