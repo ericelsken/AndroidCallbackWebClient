@@ -36,12 +36,12 @@ public class WebClient {
 	
 	private String mCharSetName;
 	
-	private int mBbufferSize;
+	private int mBufferSize;
 	
 	private WebClient() {
 		CookieHandler.setDefault(new CookieManager());
 		mCharSetName = DEFAULT_CHAR_SET_NAME;
-		mBbufferSize = DEFAULT_BUFFER_SIZE;
+		mBufferSize = DEFAULT_BUFFER_SIZE;
 		if(Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) { //Work around pre-Froyo bugs in HTTP connection reuse.
 			System.setProperty("http.keepAlive", "false");
 		}
@@ -59,14 +59,14 @@ public class WebClient {
 	}
 
 	public int getBufferSize() {
-		return mBbufferSize;
+		return mBufferSize;
 	}
 
 	public void setBufferSize(int bufferSize) {
 		if(bufferSize < 0) {
 			bufferSize = DEFAULT_BUFFER_SIZE;
 		}
-		this.mBbufferSize = bufferSize;
+		this.mBufferSize = bufferSize;
 	}
 
 	public String executeDelete(URI uri) throws IOException, HttpException {
@@ -112,28 +112,27 @@ public class WebClient {
 	}
 
 	private String inputToString(HttpURLConnection conn) throws IOException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream(mBbufferSize);
-		InputStream in = new BufferedInputStream(conn.getInputStream(), mBbufferSize);
+		ByteArrayOutputStream out = new ByteArrayOutputStream(mBufferSize);
+		InputStream in = new BufferedInputStream(conn.getInputStream(), mBufferSize);
 		copyStreams(in, out);
 		return out.toString(mCharSetName);
 	}
 	
 	private void writeData(HttpURLConnection conn, String data) throws IOException {
 		conn.setDoOutput(true);
-		OutputStream out = new BufferedOutputStream(conn.getOutputStream(), mBbufferSize);
-		InputStream in = new BufferedInputStream(new ByteArrayInputStream(data.getBytes(mCharSetName)), mBbufferSize);
+		OutputStream out = new BufferedOutputStream(conn.getOutputStream(), mBufferSize);
+		InputStream in = new BufferedInputStream(new ByteArrayInputStream(data.getBytes(mCharSetName)), mBufferSize);
 		copyStreams(in, out);
 	}
 	
 	private void copyStreams(InputStream in, OutputStream out) throws IOException {
 		int tempRead = 0;
-		byte[] buffer = new byte[mBbufferSize];
+		byte[] buffer = new byte[mBufferSize];
 		while(tempRead != -1) {
 			tempRead = in.read(buffer, 0, buffer.length);
-			if(tempRead == -1) {
-				break;
+			if(tempRead != -1) {
+				out.write(buffer, 0, tempRead);
 			}
-			out.write(buffer, 0, tempRead);
 		}
 		in.close();
 		out.close();

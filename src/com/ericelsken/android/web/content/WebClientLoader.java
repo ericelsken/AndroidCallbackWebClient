@@ -28,7 +28,7 @@ public abstract class WebClientLoader<E> extends AsyncTaskLoader<E> {
 
 	@Override
 	/**
-	 * Main method for the loading the data we want.
+	 * Worker method for the loading the data we want.
 	 */
 	public E loadInBackground() {
 		try {

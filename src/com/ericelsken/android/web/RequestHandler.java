@@ -12,19 +12,19 @@ public class RequestHandler {
 	public static final int POST = 2;
 	public static final int PUT = 3;
 	
-	private final Context context;
-	private final int id;
-	private final RequestManager manager;
-	private final RequestTask task;
-	private final URI uri;
-	private RequestCallback callback;
+	private final Context mContext;
+	private final int mId;
+	private final RequestManager mManager;
+	private final RequestTask mTask;
+	private final URI mURI;
+	private RequestCallback mCallback;
 
 	//Now begins the fields that can be set after object creation.
-	private ExceptionHandler exceptionHandler;
-	private int method;
-	private String data;
+	private ExceptionHandler mExceptionHandler;
+	private int mMethod;
+	private String mData;
 	
-	private String responseBody;
+	private String mResponseBody;
 	
 	public RequestHandler(Context context, int id, URI uri, RequestCallback callback) {
 		if(callback == null) {
@@ -33,49 +33,49 @@ public class RequestHandler {
 		if(uri == null) {
 			throw new NullPointerException("URI cannot be null.");
 		}
-		this.context = context;
-		this.id = id;
-		this.manager = RequestManager.getInstance();
-		this.task = new RequestTask();
-		this.callback = callback;
+		this.mContext = context;
+		this.mId = id;
+		this.mManager = RequestManager.getInstance();
+		this.mTask = new RequestTask();
+		this.mCallback = callback;
 		
-		this.exceptionHandler = this.manager.getExceptionHandler();
-		this.uri = uri;
-		this.method = GET;
-		this.data = null;
-		this.responseBody = null;
+		this.mExceptionHandler = this.mManager.getExceptionHandler();
+		this.mURI = uri;
+		this.mMethod = GET;
+		this.mData = null;
+		this.mResponseBody = null;
 	}
 	
 	public void setRequestCallback(RequestCallback rc) {
 		if(rc == null) {
 			throw new NullPointerException("RequestCallback parameter cannot be null.");
 		}
-		this.callback = rc;
+		this.mCallback = rc;
 	}
 	
 	public void start() {
-		if(task.getStatus() != AsyncTask.Status.RUNNING && task.getStatus() != AsyncTask.Status.FINISHED) {
-			task.execute();
+		if(mTask.getStatus() != AsyncTask.Status.RUNNING && mTask.getStatus() != AsyncTask.Status.FINISHED) {
+			mTask.execute();
 		}
 	}
 	
 	public boolean cancel() {
-		return task.cancel(true);
+		return mTask.cancel(true);
 	}
 	
 	private void handleException(Exception ex) {
 		boolean handled = false;
-		if(exceptionHandler != null) {
-			handled = exceptionHandler.handleException(context, id, ex);
+		if(mExceptionHandler != null) {
+			handled = mExceptionHandler.handleException(mContext, mId, ex);
 		}
-		callback.onRequestException(id, ex, handled);
+		mCallback.onRequestException(mId, ex, handled);
 	}
 
 	private class RequestTask extends AsyncTask<Void, Void, Object> {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			callback.onBeforeRequest(id);
+			mCallback.onBeforeRequest(mId);
 		}
 
 		@Override
@@ -83,11 +83,11 @@ public class RequestHandler {
 			Object result = null;
 			final WebClient webClient = WebClient.getInstance();
 			try {
-				switch (method) {
-				case DELETE : result = webClient.executeDelete(uri); break;
-				case GET : result = webClient.executeGet(uri); break;
-				case POST : result = webClient.executePost(uri, data); break;
-				case PUT : result = webClient.executePut(uri, data); break;
+				switch (mMethod) {
+				case DELETE : result = webClient.executeDelete(mURI); break;
+				case GET : result = webClient.executeGet(mURI); break;
+				case POST : result = webClient.executePost(mURI, mData); break;
+				case PUT : result = webClient.executePut(mURI, mData); break;
 				}
 			} catch (Exception ex) {
 				result = ex;
@@ -98,11 +98,11 @@ public class RequestHandler {
 		@Override
 		protected void onPostExecute(Object result) {
 			super.onPostExecute(result);
-			callback.onRequestDone(id, false);
+			mCallback.onRequestDone(mId, false);
 			if(result == null || result instanceof String) {
-				responseBody = (String) result;
+				mResponseBody = (String) result;
 				try {
-					callback.onRequestSuccess(id, responseBody);
+					mCallback.onRequestSuccess(mId, mResponseBody);
 				} catch (Exception ex) {
 					handleException(ex);
 				}
@@ -111,17 +111,17 @@ public class RequestHandler {
 			} else {
 				handleException(new IllegalArgumentException("Response must be an instance of either " + String.class.getName() + " or Exception."));
 			}
-			callback.onRequestFinally(id, false);
-			manager.removeRequest(id);
+			mCallback.onRequestFinally(mId, false);
+			mManager.removeRequest(mId);
 		}
 		
 		@Override
 		protected void onCancelled() {
 			super.onCancelled();
-			callback.onRequestDone(id, true);
-			handleException(new RequestCancelledException(id));
-			callback.onRequestFinally(id, true);
-			manager.removeRequest(id);
+			mCallback.onRequestDone(mId, true);
+			handleException(new RequestCancelledException(mId));
+			mCallback.onRequestFinally(mId, true);
+			mManager.removeRequest(mId);
 		}
 	}
 
@@ -129,60 +129,60 @@ public class RequestHandler {
 	 * @return the id
 	 */
 	public int getId() {
-		return id;
+		return mId;
 	}
 
 	/**
 	 * @return the URI of the request
 	 */
 	public URI getUri() {
-		return uri;
+		return mURI;
 	}
 
 	/**
 	 * @return the method
 	 */
 	public int getMethod() {
-		return method;
+		return mMethod;
 	}
 
 	/**
 	 * @return the RequestCallback
 	 */
 	public RequestCallback getCallback() {
-		return callback;
+		return mCallback;
 	}
 
 	/**
 	 * @param callback the callback to set
 	 */
 	public void setCallback(RequestCallback callback) {
-		this.callback = callback;
+		this.mCallback = callback;
 	}
 
 	/**
 	 * @return the context
 	 */
 	public Context getContext() {
-		return context;
+		return mContext;
 	}
 
 	/**
 	 * @return the exceptionHandler
 	 */
 	public ExceptionHandler getExceptionHandler() {
-		return exceptionHandler;
+		return mExceptionHandler;
 	}
 
 	/**
 	 * @return the data
 	 */
 	public String getData() {
-		return data;
+		return mData;
 	}
 	
 	public String getResponseBody() {
-		return responseBody;
+		return mResponseBody;
 	}
 	
 	public static class Builder {
@@ -193,32 +193,32 @@ public class RequestHandler {
 		}
 		
 		public Builder delete() {
-			result.method = DELETE;
+			result.mMethod = DELETE;
 			return this;
 		}
 		
 		public Builder get() {
-			result.method = GET;
+			result.mMethod = GET;
 			return this;
 		}
 		
 		public Builder post() {
-			result.method = POST;
+			result.mMethod = POST;
 			return this;
 		}
 		
 		public Builder put() {
-			result.method = PUT;
+			result.mMethod = PUT;
 			return this;
 		}
 		
 		public Builder setData(String data) {
-			result.data = data;
+			result.mData = data;
 			return this;
 		}
 		
 		public Builder setExceptionHandler(ExceptionHandler handler) {
-			result.exceptionHandler = handler;
+			result.mExceptionHandler = handler;
 			return this;
 		}
 		
