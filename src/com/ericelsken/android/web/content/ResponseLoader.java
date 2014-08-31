@@ -5,41 +5,27 @@ import java.net.URI;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 
-import com.ericelsken.android.web.WebClient;
+import com.ericelsken.android.web.Request;
+import com.ericelsken.android.web.Response;
 
-public abstract class WebClientLoader<E> extends AsyncTaskLoader<E> {
+public class ResponseLoader extends AsyncTaskLoader<Response> {
 	
 	private final URI mURI;
-	private E mData;
-	private Exception mException;
+	private Response mData;
 	
-	public WebClientLoader(Context context, URI uri) {
+	public ResponseLoader(Context context, URI uri) {
 		super(context);
 		mURI = uri;
-	}
-	
-	public boolean hasException() {
-		return mException != null;
-	}
-	
-	public Exception getException() {
-		return mException;
 	}
 
 	@Override
 	/**
 	 * Worker method for the loading the data we want.
 	 */
-	public E loadInBackground() {
-		try {
-			final String webResult = WebClient.getInstance().executeGet(mURI);
-			E result = onUnmarshal(webResult);
-			mException = null; //no errors. delivering the result.
-			return result;
-		} catch (Exception ex) {
-			mException = ex;
-			return null;
-		}
+	public Response loadInBackground() {
+		Request req = new Request.Builder(mURI).get().create();
+		Response res = req.execute();
+		return res;
 	}
 
 	@Override
@@ -47,14 +33,14 @@ public abstract class WebClientLoader<E> extends AsyncTaskLoader<E> {
 	 * Called with data that was successfully loaded.
 	 * Adds some logic to process the data over default implementation.
 	 */
-	public void deliverResult(E data) {
+	public void deliverResult(Response data) {
 		if(isReset()) {
 			//An async request came in while the loader was stopped, so we don't need the result.
 			if(data != null) {
 				onReleaseResources(data);
 			}
 		}
-		E oldData = mData;
+		Response oldData = mData;
 		mData = data;
 		if(isStarted()) {
 			//If the loader is currently started, we can immediately deliver the result.
@@ -93,13 +79,12 @@ public abstract class WebClientLoader<E> extends AsyncTaskLoader<E> {
 	/**
 	 * Called with data that was obtained from a cancelled task.
 	 */
-	public void onCanceled(E data) {
+	public void onCanceled(Response data) {
 		super.onCanceled(data);
 		//The task that loaded this data was cancelled, we don't need it.
 		if(data != null) {
 			onReleaseResources(data);
 		}
-		mException = null;
 	}
 	
 	@Override
@@ -115,9 +100,9 @@ public abstract class WebClientLoader<E> extends AsyncTaskLoader<E> {
 			onReleaseResources(mData);
 		}
 		mData = null;
-		mException = null;
 	}
 	
-	protected abstract E onUnmarshal(String value) throws Exception;
-	protected abstract void onReleaseResources(E value);
+	protected void onReleaseResources(Response res) {
+		//do nothing.
+	}
 }
