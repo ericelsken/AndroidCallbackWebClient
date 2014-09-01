@@ -1,7 +1,5 @@
 package com.ericelsken.android.web.content;
 
-import java.net.URI;
-
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 
@@ -10,29 +8,31 @@ import com.ericelsken.android.web.Response;
 
 public class ResponseLoader extends AsyncTaskLoader<Response> {
 	
-	private final URI mURI;
+	private final Request mReq;
 	private Response mData;
 	
-	public ResponseLoader(Context context, URI uri) {
+	public ResponseLoader(Context context, Request req) {
 		super(context);
-		mURI = uri;
+		if(req == null) {
+			throw new NullPointerException("Request cannot be null.");
+		}
+		mReq = req;
 	}
 
-	@Override
 	/**
 	 * Worker method for the loading the data we want.
 	 */
+	@Override
 	public Response loadInBackground() {
-		Request req = new Request.Builder(mURI).get().create();
-		Response res = req.execute();
+		Response res = mReq.execute();
 		return res;
 	}
 
-	@Override
 	/**
 	 * Called with data that was successfully loaded.
 	 * Adds some logic to process the data over default implementation.
 	 */
+	@Override
 	public void deliverResult(Response data) {
 		if(isReset()) {
 			//An async request came in while the loader was stopped, so we don't need the result.
@@ -52,10 +52,10 @@ public class ResponseLoader extends AsyncTaskLoader<Response> {
 		}
 	}
 	
-	@Override
 	/**
 	 * Called when startLoading() is called on the Loader.
 	 */
+	@Override
 	protected void onStartLoading() {
 		if(mData != null) {
 			deliverResult(mData);
@@ -66,19 +66,19 @@ public class ResponseLoader extends AsyncTaskLoader<Response> {
 		}
 	}
 	
-	@Override
 	/**
 	 * Called when stopLoading() is called on the Loader.
 	 */
+	@Override
 	protected void onStopLoading() {
 		//Attempt to cancel the current load task, if possible.
 		cancelLoad();
 	}
 	
-	@Override
 	/**
 	 * Called with data that was obtained from a cancelled task.
 	 */
+	@Override
 	public void onCanceled(Response data) {
 		super.onCanceled(data);
 		//The task that loaded this data was cancelled, we don't need it.
@@ -87,10 +87,10 @@ public class ResponseLoader extends AsyncTaskLoader<Response> {
 		}
 	}
 	
-	@Override
 	/**
 	 * Handles a request to completely reset the loader.
 	 */
+	@Override
 	protected void onReset() {
 		super.onReset();
 		//Ensure that the loader is stopped.
@@ -103,6 +103,6 @@ public class ResponseLoader extends AsyncTaskLoader<Response> {
 	}
 	
 	protected void onReleaseResources(Response res) {
-		//do nothing.
+		//Do nothing. Leave here for future development.
 	}
 }

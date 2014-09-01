@@ -15,8 +15,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.content.Context;
+import android.os.Build;
+
+import com.ericelsken.android.web.content.ResponseLoader;
 
 public class Request {
+	
+	static {
+		//Work around pre-Froyo bugs in HTTP connection reuse.
+		if(Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
+			System.setProperty("http.keepAlive", "false");
+		}
+	}
 	
 	public static final int DEFAULT_BUFFER_SIZE = 1 << 10;
 	public static final int DELETE = 0;
@@ -64,7 +74,14 @@ public class Request {
 	}
 	
 	public RequestHandler handle(Context context, int id, RequestCallback callback) {
-		return new RequestHandler(context, id, this, callback);
+		RequestHandler handler = new RequestHandler(context, id, this, callback);
+		handler.start();
+		return handler;
+	}
+	
+	public ResponseLoader load(Context context) {
+		ResponseLoader loader = new ResponseLoader(context, this);
+		return loader;
 	}
 	
 	public Response execute() {

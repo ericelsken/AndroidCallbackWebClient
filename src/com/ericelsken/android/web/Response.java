@@ -1,5 +1,6 @@
 package com.ericelsken.android.web;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
@@ -28,10 +29,28 @@ public class Response {
 		return ex;
 	}
 	
+	public int getResponseCode() {
+		if(conn == null) {
+			return -1;
+		}
+		try {
+			return conn.getResponseCode();
+		} catch (IOException e) {
+			return -1;
+		}
+	}
+	
 	public Map<String, List<String>> getHeaderFields() {
 		if(conn == null) {
 			return null;
 		}
 		return conn.getHeaderFields();
+	}
+	
+	public String getHeaderField(String key) {
+		if(conn == null) {
+			return null;
+		}
+		return conn.getHeaderField(key);
 	}
 }
