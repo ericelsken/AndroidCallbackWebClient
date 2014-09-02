@@ -50,11 +50,10 @@ public class RequestHandler {
 	}
 	
 	private void handleException(Exception ex) {
-		boolean handled = false;
-		if(mExceptionHandler != null) {
+		boolean handled = mCallback.onRequestException(mId, ex);
+		if(!handled && mExceptionHandler != null) {
 			handled = mExceptionHandler.handleException(mContext, mId, ex);
 		}
-		mCallback.onRequestException(mId, ex, handled);
 	}
 
 	private class RequestTask extends AsyncTask<Void, Void, Response> {
@@ -80,6 +79,7 @@ public class RequestHandler {
 				try {
 					mCallback.onRequestSuccess(mId, mRes);
 				} catch (Exception ex) {
+					mRes.setException(ex);
 					handleException(ex);
 				}
 			}

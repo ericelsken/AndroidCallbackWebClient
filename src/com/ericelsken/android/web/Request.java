@@ -19,6 +19,36 @@ import android.os.Build;
 
 import com.ericelsken.android.web.content.ResponseLoader;
 
+/**
+ * This class represents some request to be made to a remote http or https server. Most all of your interaction with
+ * this library will be through this class, or at the very least, involve this class.
+ * Instance of this class cannot be instantiated directly, and are instead created by using the request.Builder class.
+ * Currently, Requests have the capability of setting a method (DELETE, GET, POST, PUT), the destination URI,
+ * PUT and POST request bodies, and set a buffer size to use when writing and reading the request and response bodies,
+ * and setting headers for the request and retrieving them from Response objects.
+ * More capability is excepted in the future.
+ * 
+ * Please see the Request.Builder documentation for how to create instances of this class.
+ * 
+ * All Requests manage cookies using the CookieHandler class and its subclasses. Please see the CookieHandler,
+ * CookieManager, and CookieStore class documentation in the java.net package for details on how to use cookies with
+ * Requests.
+ * It is recommended to call CookkieHandler.setDefault(new CookieManager()) in some app one-time initialization
+ * code to enable simple handling of cookies.
+ * 
+ * The two main interactions of this class will be through newLoader() and handle().
+ * newLoader() creates and returns a new Loader<Response> that can be used in the typical fashion with a LoaderManager.
+ * handle() creates, starts, and returns a new RequestHandler for use with a RequestCallback instance.
+ * 
+ * Note that the execute() method is where the networking occurs, and therefore CANNOT be called on the main-UI thread.
+ * Both ResponseLoader and RequestHandler will manage this call for you. If you wish to use this class outside of 
+ * ResponseLoader or RequestHandler, then you must handle calling execute() not on the main-UI thread.
+ * Multiple successive calls to execute() will return the same Response object that was returned upon the first call.
+ * In essence, this class is meant to used once to obtain on Response object.
+ * 
+ * @author Eric Elsken
+ *
+ */
 public class Request {
 	
 	static {
@@ -28,14 +58,18 @@ public class Request {
 		}
 	}
 	
+	/**
+	 * The default buffer size to use when reading/writing requests.
+	 */
 	public static final int DEFAULT_BUFFER_SIZE = 1 << 10;
-	public static final int DELETE = 0;
-	public static final int GET = 1;
-	public static final int POST = 2;
-	public static final int PUT = 3;
+
+	private static final int DELETE = 0;
+	private static final int GET = 1;
+	private static final int POST = 2;
+	private static final int PUT = 3;
 	
 	/**
-	 * All object fields of this class must be immutable or copied into instances of this class.
+	 * All object fields of this class must be immutable or deep-copied into Request objects.
 	 */
 	private static class Params {
 		private final URI uri;
@@ -53,37 +87,64 @@ public class Request {
 		}
 	}
 	
+	/**
+	 * The Response obtained from this Request in execute().
+	 */
 	private Response response;
 	
-	//following should be an exact copy of Params fields, all final.
+	//following should be an exact copy of Params fields, all final, and all deep copied from a Params object.
 	private final URI uri;
 	private final String data;
 	private final int method;
 	private final int bufferSize;
 	private final List<String[]> headers;
 	
+	/**
+	 * Deep-copy all fields from p into this classes fields.
+	 * @param p the Params object from which to copy values into this instance.
+	 */
 	private Request(Params p) {
 		uri = p.uri;
 		data = p.data;
 		method = p.method;
 		bufferSize = p.bufferSize;
+		//deep-copy the headers.
 		headers = new LinkedList<String[]>();
 		for(String[] pair : p.headers) {
 			headers.add(new String[] {pair[0], pair[1]});
 		}
 	}
 	
+	/**
+	 * Creates, starts, and returns a new RequestHandler with the given id, Context, and RequestCallback.
+	 * Creates the RequestHandler via new RequestHandler(context, id, this, callback), starts the handler, and returns it.
+	 * @param context the Context of the RequestHandler.
+	 * @param id the id of the RequestHandler.
+	 * @param callback the RequestCallback object that receives callbacks from the RequestHandler.
+	 * @return the new, started RequestHandler now handling this Request.
+	 */
 	public RequestHandler handle(Context context, int id, RequestCallback callback) {
 		RequestHandler handler = new RequestHandler(context, id, this, callback);
 		handler.start();
 		return handler;
 	}
 	
-	public ResponseLoader load(Context context) {
+	/**
+	 * Creates and returns a new ResponseLoader that loads its Response from this Request.
+	 * @param context the Context of the ResponseLoader.
+	 * @return the newly created ResponseLoader.
+	 */
+	public ResponseLoader newLoader(Context context) {
 		ResponseLoader loader = new ResponseLoader(context, this);
 		return loader;
 	}
 	
+	/**
+	 * Executes this Request and returns the Response object obtained from the Request.
+	 * This method makes networking calls and thus CANNOT be called on the main-UI thread.
+	 * Multiple, successive calls to this method on the same instance will return the Response from the first call.
+	 * @return the Response object obtained from executing this Request.
+	 */
 	public Response execute() {
 		if(response != null) {
 			return response;
@@ -105,6 +166,13 @@ public class Request {
 		return response;
 	}
 	
+	/**
+	 * Actually makes the networking request and returns the response body returned from the request.
+	 * @param conn connection used in making the request.
+	 * @return the response body returned from the request.
+	 * @throws IOException if an IO problem occurs while making the request.
+	 * @throws HttpException if the response status code is not 2xx.
+	 */
 	private String executeRequest(HttpURLConnection conn) throws IOException, HttpException {
 		String body = null;
 		try {
@@ -124,6 +192,11 @@ public class Request {
 		return body;
 	}
 	
+	/**
+	 * Applies the settings of this request to the connection being used to make the request.
+	 * @param conn connection used in making the request.
+	 * @throws ProtocolException see ProtocolException documentation.
+	 */
 	private void apply(HttpURLConnection conn) throws ProtocolException {
 		switch(method) {
 		case DELETE: conn.setRequestMethod("DELETE"); break;
@@ -180,6 +253,7 @@ public class Request {
 		
 		public Builder get() {
 			p.method = GET;
+			p.data = null;
 			return this;
 		}
 		

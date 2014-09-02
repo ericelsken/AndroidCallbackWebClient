@@ -9,7 +9,7 @@ public class Response {
 
 	private final HttpURLConnection conn;
 	private final String body;
-	private final Exception ex;
+	private Exception ex;
 	
 	public Response(HttpURLConnection conn, String body, Exception ex) {
 		this.conn = conn;
@@ -27,6 +27,10 @@ public class Response {
 
 	public Exception getException() {
 		return ex;
+	}
+	
+	public void setException(Exception ex) {
+		this.ex = ex;
 	}
 	
 	public int getResponseCode() {
