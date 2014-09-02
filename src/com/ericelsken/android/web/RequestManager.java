@@ -96,7 +96,7 @@ public class RequestManager {
 	 * @param id the id used to identify the RequestHandler.
 	 * @param callback the new RequestCallback to set on the RequestHandler.
 	 */
-	public void setCallback(int id, RequestCallback callback) {
+	public void setCallback(int id, RequestCallbacks callback) {
 		RequestHandler rh = mArray.get(id);
 		if(rh != null) {
 			rh.setRequestCallback(callback);

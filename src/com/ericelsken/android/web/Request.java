@@ -92,7 +92,7 @@ public class Request {
 	 */
 	private Response response;
 	
-	//following should be an exact copy of Params fields, all final, and all deep copied from a Params object.
+	//The following should be an exact copy of Params fields, all final, and all deep copied from a Params object.
 	private final URI uri;
 	private final String data;
 	private final int method;
@@ -100,7 +100,7 @@ public class Request {
 	private final List<String[]> headers;
 	
 	/**
-	 * Deep-copy all fields from p into this classes fields.
+	 * Deep-copy all fields from p into this class' fields.
 	 * @param p the Params object from which to copy values into this instance.
 	 */
 	private Request(Params p) {
@@ -123,7 +123,7 @@ public class Request {
 	 * @param callback the RequestCallback object that receives callbacks from the RequestHandler.
 	 * @return the new, started RequestHandler now handling this Request.
 	 */
-	public RequestHandler handle(Context context, int id, RequestCallback callback) {
+	public RequestHandler handle(Context context, int id, RequestCallbacks callback) {
 		RequestHandler handler = new RequestHandler(context, id, this, callback);
 		handler.start();
 		return handler;

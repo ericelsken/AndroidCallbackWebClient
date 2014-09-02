@@ -48,7 +48,7 @@ public class RequestHandler {
 	private final int mId;
 	private final RequestManager mManager;
 	private final RequestTask mTask;
-	private RequestCallback mCallback;
+	private RequestCallbacks mCallback;
 	private ExceptionHandler mExceptionHandler;
 	
 	private final Request mReq;
@@ -72,7 +72,7 @@ public class RequestHandler {
 	 * @throws NullPointerException if either Request or RequestCallback is
 	 * null.
 	 */
-	public RequestHandler(Context context, int id, Request req, RequestCallback callback) {
+	public RequestHandler(Context context, int id, Request req, RequestCallbacks callback) {
 		if(callback == null) {
 			throw new NullPointerException("RequestCallback cannot be null.");
 		}
@@ -94,7 +94,7 @@ public class RequestHandler {
 	 * the Request life-cycle.
 	 * @param rc the new ReuqetsCallback implementation.
 	 */
-	public void setRequestCallback(RequestCallback rc) {
+	public void setRequestCallback(RequestCallbacks rc) {
 		if(rc == null) {
 			throw new NullPointerException(
 					"RequestCallback parameter cannot be null.");
@@ -197,7 +197,7 @@ public class RequestHandler {
 	 * Returns the RequestCallback currently being used by this handler.
 	 * @return the RequestCallback currently being used by this handler.
 	 */
-	public RequestCallback getCallback() {
+	public RequestCallbacks getCallback() {
 		return mCallback;
 	}
 
@@ -207,7 +207,7 @@ public class RequestHandler {
 	 * @param callback the new RequestCallback instance.
 	 * @throws NullPointerException if RequestCallback is null.
 	 */
-	public void setCallback(RequestCallback callback) {
+	public void setCallback(RequestCallbacks callback) {
 		if(callback == null) {
 			throw new NullPointerException("RequestCallback cannot be null.");
 		}

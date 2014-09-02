@@ -37,7 +37,7 @@ package com.ericelsken.android.web;
  * @author Eric Elsken
  *
  */
-public interface RequestCallback {
+public interface RequestCallbacks {
 	
 	/**
 	 * Called before background or network processing of the Request occurs.
