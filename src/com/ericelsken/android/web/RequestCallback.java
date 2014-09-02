@@ -30,7 +30,8 @@ package com.ericelsken.android.web;
  * 	its processing, no further action is taken with the Exception.
  * 	If the Request was cancelled, onRequestSuccess() will not be called, and the Exception received by this callback
  * 	will be an instance of RequestCancelledException.
- * TODO
+ * 	As long as you properly create the URI of a request and have access to make network calls, the exceptions
+ * 	received in the method will mostly be instances of HttpException or ones thrown by onRequestSuccess().
  * 5. onRequestFinally() is called in all cases after the call(s) to onRequestSuccess() and onRequestException() return.
  * 
  * @author Eric Elsken

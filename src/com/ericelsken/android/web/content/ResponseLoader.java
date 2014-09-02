@@ -6,11 +6,31 @@ import android.content.Context;
 import com.ericelsken.android.web.Request;
 import com.ericelsken.android.web.Response;
 
+/**
+ * An implementation of AsyncTaskLoader that loads a Response by executing
+ * a given Request. 
+ * 
+ * @author Eric Elsken
+ *
+ */
 public class ResponseLoader extends AsyncTaskLoader<Response> {
 	
-	private final Request mReq;
-	private Response mData;
+	/**
+	 * The Request to execute.
+	 */
+	protected final Request mReq;
 	
+	/**
+	 * The Response received from mReq.execute().
+	 */
+	protected Response mRes;
+	
+	/**
+	 * Creates a new Loader that loads a Response from the given Request in
+	 * the given Context.
+	 * @param context the Context in which to load.
+	 * @param req the Request to execute.
+	 */
 	public ResponseLoader(Context context, Request req) {
 		super(context);
 		if(req == null) {
@@ -35,18 +55,21 @@ public class ResponseLoader extends AsyncTaskLoader<Response> {
 	@Override
 	public void deliverResult(Response data) {
 		if(isReset()) {
-			//An async request came in while the loader was stopped, so we don't need the result.
+			//An async request came in while the loader was stopped, so we
+			//don't need the result.
 			if(data != null) {
 				onReleaseResources(data);
 			}
 		}
-		Response oldData = mData;
-		mData = data;
+		Response oldData = mRes;
+		mRes = data;
 		if(isStarted()) {
-			//If the loader is currently started, we can immediately deliver the result.
+			//If the loader is currently started, we can immediately deliver
+			//the result.
 			super.deliverResult(data);
 		}
-		//At this point we can release the old data since we have delivered the new data.
+		//At this point we can release the old data since we have delivered
+		//the new data.
 		if(oldData != null) {
 			onReleaseResources(oldData);
 		}
@@ -57,11 +80,12 @@ public class ResponseLoader extends AsyncTaskLoader<Response> {
 	 */
 	@Override
 	protected void onStartLoading() {
-		if(mData != null) {
-			deliverResult(mData);
+		if(mRes != null) {
+			deliverResult(mRes);
 		}
-		if(takeContentChanged() || mData == null) {
-			//If the data has changed since last time or there is no data to provide, then force a load of data.
+		if(takeContentChanged() || mRes == null) {
+			//If the data has changed since last time or there is no data to
+			//provide, then force a load of data.
 			forceLoad();
 		}
 	}
@@ -96,10 +120,10 @@ public class ResponseLoader extends AsyncTaskLoader<Response> {
 		//Ensure that the loader is stopped.
 		onStopLoading();
 		//We can now release anything associated with data.
-		if(mData != null) {
-			onReleaseResources(mData);
+		if(mRes != null) {
+			onReleaseResources(mRes);
 		}
-		mData = null;
+		mRes = null;
 	}
 	
 	protected void onReleaseResources(Response res) {

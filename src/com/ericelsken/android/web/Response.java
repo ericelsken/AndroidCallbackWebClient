@@ -8,7 +8,7 @@ import java.util.Map;
 public class Response {
 
 	private final HttpURLConnection conn;
-	private final String body;
+	private String body;
 	private Exception ex;
 	
 	public Response(HttpURLConnection conn, String body, Exception ex) {
@@ -19,6 +19,10 @@ public class Response {
 	
 	public String getBody() {
 		return body;
+	}
+	
+	public void releaseBody() {
+		body = null;
 	}
 	
 	public boolean hasException() {
