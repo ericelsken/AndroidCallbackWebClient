@@ -237,47 +237,101 @@ public class Request {
 		in.close();
 		out.close();
 	}
-
+	
+	/**
+	 * Utility class for building Request objects.
+	 * All Requests must be created through this class.
+	 * All calls on this class will reflect the settings of the Request object
+	 * returned by create().
+	 * All methods of this class return a reference to this so that method call
+	 * chaining is easy.
+	 * 
+	 * @author Eric Elsken
+	 *
+	 */
 	public static class Builder {
 		
 		private final Params p;
 		
+		/**
+		 * Creates a new Builder with the provided URI.
+		 * Without any further calls, the built Request will be a GET request
+		 * to the given URI with the default buffer size and no headers.
+		 * @param uri the URI of the Request.
+		 */
 		public Builder(URI uri) {
 			p = new Params(uri);
 		}
 		
+		/**
+		 * Sets the built Request to be a DELETE Request.
+		 * @return this
+		 */
 		public Builder delete() {
 			p.method = DELETE;
 			return this;
 		}
 		
+		/**
+		 * Sets the built Request to be a GET Request.
+		 * If there is any data already associated with the Request, then it is
+		 * removed.
+		 * @return this
+		 */
 		public Builder get() {
 			p.method = GET;
 			p.data = null;
 			return this;
 		}
 		
+		/**
+		 * Sets the built Request to be a POST Request.
+		 * @return this
+		 */
 		public Builder post() {
 			p.method = POST;
 			return this;
 		}
 		
+		/**
+		 * Sets the built Request to be a GET Request.
+		 * @return this
+		 */
 		public Builder put() {
 			p.method = PUT;
 			return this;
 		}
 		
+		/**
+		 * Sets the data to be sent in the Request for DELETE, POST, and PUT
+		 * requests.
+		 * @param data the data to send as part of the Request.
+		 * @return this
+		 */
 		public Builder setData(String data) {
 			p.data = data;
 			return this;
 		}
 		
+		/**
+		 * Sets the size of the buffer to use when writing/reading the Request/
+		 * Response.
+		 * @param bufferSize the new buffer size. If negative or zero, this is
+		 * a no-op.
+		 * @return this
+		 */
 		public Builder setBufferSize(int bufferSize) {
-			bufferSize = bufferSize < 0 ? DEFAULT_BUFFER_SIZE : bufferSize;
+			bufferSize = bufferSize <= 0 ? p.bufferSize : bufferSize;
 			p.bufferSize = bufferSize;
 			return this;
 		}
 		
+		/**
+		 * Sets the header value to be associated with the field name.
+		 * @param field the name of the header.
+		 * @param newValue the new value of the header to be associated with field.
+		 * @return this.
+		 */
 		public Builder setHeader(String field, String newValue) {
 			if(field == null || newValue == null) {
 				throw new NullPointerException("field and newValue cannot be null.");
@@ -286,6 +340,11 @@ public class Request {
 			return this;
 		}
 		
+		/**
+		 * Creates and returns a new Request with the settings provided by all
+		 * the calls on this object.
+		 * @return the newly created Request.
+		 */
 		public Request create() {
 			return new Request(p);
 		}

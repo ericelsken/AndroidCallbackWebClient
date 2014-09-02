@@ -11,7 +11,7 @@ import com.ericelsken.android.web.Response;
  * The unmarshal() method provided by this class should be implemented such that
  * it converts the Response to some other form for use elsewhere in the
  * application. Note that the Response body will still be a string in memory
- * after unmarshal() returns. If this is a lot of data or it no longer needed,
+ * after unmarshal() returns. If this is a lot of data or it is no longer needed,
  * it may be helpful to call Response.releaseBody() in order to release that
  * reference to free up that memory.
  * 
@@ -19,8 +19,8 @@ import com.ericelsken.android.web.Response;
  * release anything created in unmarshal(). For instance, this could be closing
  * a Cursor or something of that nature.
  * 
- * An example of this would be to create a JSONObject from the Response body if
- * you know the result of the Request is going to be some JSON content.
+ * An example of this class would be to create a JSONObject from the Response
+ * body if you know the result of the Request is going to be some JSON content.
  * Then by calling getData(), that JSONObject is ready for use without further
  * processing needed in the onLoadFinished() callback.
  * 
@@ -51,17 +51,17 @@ public abstract class UnmarshalingResponseLoader<E> extends ResponseLoader {
 	}
 	
 	/**
-	 * Worker method for the loading the data we want.
+	 * Worker method for executing the Request.
 	 */
 	@Override
 	public Response loadInBackground() {
 		super.loadInBackground();
 		try {
-			mData = unmarshal(mRes);
+			mData = unmarshal(getResponse());
 		} catch (Exception ex) {
 			mUnmarshalingException = ex;
 		}
-		return mRes;
+		return getResponse();
 	}
 	
 	/**

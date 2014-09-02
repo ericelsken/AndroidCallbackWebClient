@@ -18,12 +18,12 @@ public class ResponseLoader extends AsyncTaskLoader<Response> {
 	/**
 	 * The Request to execute.
 	 */
-	protected final Request mReq;
+	private final Request mReq;
 	
 	/**
 	 * The Response received from mReq.execute().
 	 */
-	protected Response mRes;
+	private Response mRes;
 	
 	/**
 	 * Creates a new Loader that loads a Response from the given Request in
@@ -38,9 +38,13 @@ public class ResponseLoader extends AsyncTaskLoader<Response> {
 		}
 		mReq = req;
 	}
+	
+	protected Response getResponse() {
+		return mRes;
+	}
 
 	/**
-	 * Worker method for the loading the data we want.
+	 * Worker method for executing the Request.
 	 */
 	@Override
 	public Response loadInBackground() {
