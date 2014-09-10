@@ -158,7 +158,7 @@ public class Request {
 			}
 			URL url = uri.toURL();
 			conn = (HttpURLConnection) url.openConnection();
-			body = executeRequest(conn);
+			body = executeForBody(conn);
 		} catch (Exception ex) {
 			caught = ex;
 		}
@@ -173,7 +173,7 @@ public class Request {
 	 * @throws IOException if an IO problem occurs while making the request.
 	 * @throws HttpException if the response status code is not 2xx.
 	 */
-	private String executeRequest(HttpURLConnection conn) throws IOException, HttpException {
+	private String executeForBody(HttpURLConnection conn) throws IOException, HttpException {
 		String body = null;
 		try {
 			apply(conn);
@@ -294,7 +294,7 @@ public class Request {
 		}
 		
 		/**
-		 * Sets the built Request to be a GET Request.
+		 * Sets the built Request to be a PUT Request.
 		 * @return this
 		 */
 		public Builder put() {
