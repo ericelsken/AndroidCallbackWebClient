@@ -21,7 +21,7 @@ package com.ericelsken.android.web;
  * 	somewhere inside this method while processing the Response. In this case, you may throw that Exception. This results
  * 	in Response.hasException() to return true, Response.getException() to return the Exception thrown, and
  * 	onRequestException() to be called with the thrown Exception.
- * 4. onRequestException() is called if an Exception is caught while e2xecuteing the Request or if one is thrown from
+ * 4. onRequestException() is called if an Exception is caught while executing the Request or if one is thrown from
  * 	onRequestSuccess(). Note that only one of onRequestSuccess() or onRequestException() will be called unless an Exception
  * 	is thrown from onRequestSuccess(). 
  * 	The return value of this method indicates whether or not this method properly and completely handled this Exception.
@@ -61,13 +61,15 @@ public interface RequestCallbacks {
 	public void onRequestSuccess(int id, Response res) throws Exception;
 	
 	/**
-	 * Called when the Request finished with a non 2xx status code (thus ex will be an instance of HttpException)
+	 * Called when the Request finished with a non 2xx status code
 	 * or when another Exception was caught while executing the Request.
+	 * Response.hasException() is guaranteed to return true and
+	 * Response.getException() return a non-null value.
 	 * @param id the id given to the RequestHandler handling the Request.
 	 * @param ex the Exception caught as result of executing the Request.
 	 * @return true to indicate ex requires further processing by the RequestHandler's ExceptionHandler, false if not.
 	 */
-	public boolean onRequestException(int id, Exception ex);
+	public boolean onRequestException(int id, Response res);
 	
 	/**
 	 * Called regardless of success or failure (Exception caught) when the Request completes and after call(s) to

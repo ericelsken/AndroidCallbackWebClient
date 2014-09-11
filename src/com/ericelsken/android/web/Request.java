@@ -150,7 +150,7 @@ public class Request {
 			return response;
 		}
 		HttpURLConnection conn = null;
-		String body = null;
+		String body = "";
 		Exception caught = null;
 		try {
 			if(uri.getScheme() == null || uri.getScheme().indexOf("http") != 0) {
@@ -158,38 +158,34 @@ public class Request {
 			}
 			URL url = uri.toURL();
 			conn = (HttpURLConnection) url.openConnection();
-			body = executeForBody(conn);
-		} catch (Exception ex) {
-			caught = ex;
-		}
-		response = new Response(conn, body, caught);
-		return response;
-	}
-	
-	/**
-	 * Actually makes the networking request and returns the response body returned from the request.
-	 * @param conn connection used in making the request.
-	 * @return the response body returned from the request.
-	 * @throws IOException if an IO problem occurs while making the request.
-	 * @throws HttpException if the response status code is not 2xx.
-	 */
-	private String executeForBody(HttpURLConnection conn) throws IOException, HttpException {
-		String body = null;
-		try {
 			apply(conn);
 			if(data != null) {
 				writeData(conn);
 			}
-			body = inputToString(conn);
-		}
-		finally {
+			body = streamToString(conn.getInputStream());
+		} catch (Exception ex) {
+			caught = ex;
+			if(conn.getErrorStream() != null) {
+				try {
+					body = streamToString(conn.getErrorStream());
+				} catch (IOException inner) {
+					caught = inner;
+				}
+			}
+		} finally {
+			try {
+				int status = conn.getResponseCode();
+				String message = conn.getResponseMessage();
+				if(status / 100 != 2) {
+					caught = new HttpException(status, message, body);
+				}
+			} catch (IOException ex) {
+				caught = ex;
+			}
 			conn.disconnect();
 		}
-		int statusCode = conn.getResponseCode();
-		if(statusCode / 100 != 2) {
-			throw new HttpException(statusCode, conn.getResponseMessage(), body);
-		}
-		return body;
+		response = new Response(conn, body, caught);
+		return response;
 	}
 	
 	/**
@@ -209,9 +205,8 @@ public class Request {
 		}
 	}
 	
-	private String inputToString(HttpURLConnection conn) throws IOException {
+	private String streamToString(InputStream in) throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream(bufferSize);
-		InputStream in = new BufferedInputStream(conn.getInputStream(), bufferSize);
 		copyStreams(in, out);
 		return out.toString();
 	}

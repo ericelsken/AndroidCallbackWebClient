@@ -128,15 +128,14 @@ public class RequestHandler {
 	}
 	
 	/**
-	 * Attempt to handle an Exception caught somewhere is executing the Request.
-	 * @param ex the Exception to handle.
+	 * Attempt to handle an Exception caught somewhere in executing the Request.
 	 */
-	private void handleException(Exception ex) {
+	private void handleException() {
 		//First attempt to handle with the callback.
-		boolean handled = mCallback.onRequestException(mId, ex);
+		boolean handled = mCallback.onRequestException(mId, mRes);
 		//If it was not handled by the callback, then attempt with the handler.
 		if(!handled && mExceptionHandler != null) {
-			handled = mExceptionHandler.handleException(mContext, mId, ex);
+			handled = mExceptionHandler.handleException(mContext, mId, mRes.getException());
 		}
 	}
 	
@@ -166,13 +165,13 @@ public class RequestHandler {
 			mRes = result;
 			mCallback.onRequestDone(mId, false);
 			if(mRes.hasException()) {
-				handleException(mRes.getException());
+				handleException();
 			} else {
 				try {
 					mCallback.onRequestSuccess(mId, mRes);
 				} catch (Exception ex) {
 					mRes.setException(ex);
-					handleException(ex);
+					handleException();
 				}
 			}
 			mCallback.onRequestFinally(mId, false);
@@ -183,7 +182,8 @@ public class RequestHandler {
 		protected void onCancelled() {
 			super.onCancelled();
 			mCallback.onRequestDone(mId, true);
-			handleException(new RequestCancelledException(mId));
+			mRes.setException(new RequestCancelledException(mId));
+			handleException();
 			mCallback.onRequestFinally(mId, true);
 			mManager.removeRequest(mId);
 		}

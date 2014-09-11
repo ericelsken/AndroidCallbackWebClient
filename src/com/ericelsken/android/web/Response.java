@@ -98,7 +98,7 @@ public class Response {
 	 * Returns the response code of the Response.
 	 * @return the response code, or -1 if it not possible to retrieve.
 	 */
-	public int getResponseCode() {
+	public int getStatusCode() {
 		if(conn == null) {
 			return -1;
 		}

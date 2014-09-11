@@ -62,6 +62,7 @@ public class MainActivity extends Activity implements OnClickListener,
 			//more custom way to handle a request.
 			Request.Builder builder = new Request.Builder(URI.create("http://www.example.com"));
 			//add customizations to the Request here.
+			builder.put();
 			Request req = builder.create(); //create the Request.
 			RequestHandler handler = new RequestHandler(this, WRC_FAILURE, req, this); //create a new handler for the Request.
 			handler.start(); //start the handler.
@@ -82,15 +83,13 @@ public class MainActivity extends Activity implements OnClickListener,
 
 	@Override
 	public void onRequestSuccess(int id, Response res) throws Exception {
-		Toast.makeText(this, "onRequestSuccess() " + id + " " + res, Toast.LENGTH_SHORT).show();
-		if(id == WRC_FAILURE) {
-			throw new Exception("throwing exception because this is supposed to be a failed request.");
-		}
+		Toast.makeText(this, "onRequestSuccess() " + id + " \n" + res, Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
-	public boolean onRequestException(int id, Exception ex) {
-		Toast.makeText(this, "onRequestException() " + id + " " + ex, Toast.LENGTH_SHORT).show();
+	public boolean onRequestException(int id, Response res) {
+		int status = res.getStatusCode();
+		Toast.makeText(this, "onRequestException() " + id + " " + status + " " + res.getException(), Toast.LENGTH_SHORT).show();
 		return false;
 	}
 
@@ -112,15 +111,15 @@ public class MainActivity extends Activity implements OnClickListener,
 
 	@Override
 	public void onLoadFinished(Loader<Response> loader, Response data) {
+		mWebView.loadData(data.getBody(), "text/html", null);
 		if(data.hasException()) {
 			Toast.makeText(this, data.getException().getMessage(), Toast.LENGTH_SHORT).show();
 			return;
 		}
-		mWebView.loadData(data.getBody(), "text/html", "utf-8");
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Response> loader) {
-		mWebView.loadData("", "text/html", "utf-8");
+		mWebView.loadData("", "text/html", null);
 	}
 }
