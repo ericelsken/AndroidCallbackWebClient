@@ -32,7 +32,7 @@ public class Response {
 	 * that occurred while executing the Request.
 	 * @param conn an HttpURLConnection that was used to make a request.
 	 * @param body the response body.
-	 * @param ex an Exception that was possibly caught while maing a request.
+	 * @param ex an Exception that was possibly caught while making a request.
 	 */
 	public Response(HttpURLConnection conn, String body, Exception ex) {
 		this.conn = conn;
@@ -132,5 +132,10 @@ public class Response {
 			return null;
 		}
 		return conn.getHeaderField(key);
+	}
+	
+	@Override
+	public String toString() {
+		return body + " " + ex;
 	}
 }

@@ -1,5 +1,7 @@
 <resources>
 
     <string name="app_name">Web Client</string>
+    <string name="client_request_success">Request Success</string>
+    <string name="client_request_failure">Request Failure</string>
 
 </resources>

@@ -57,7 +57,9 @@ public abstract class UnmarshalingResponseLoader<E> extends ResponseLoader {
 	public Response loadInBackground() {
 		super.loadInBackground();
 		try {
-			mData = unmarshal(getResponse());
+			if(!getResponse().hasException()) {
+				mData = unmarshal(getResponse());
+			}
 		} catch (Exception ex) {
 			mUnmarshalingException = ex;
 		}
@@ -102,6 +104,7 @@ public abstract class UnmarshalingResponseLoader<E> extends ResponseLoader {
 
 	/**
 	 * Called when the Response needs to be unmarshaled.
+	 * Response.hasException() is guaranteed to return false in this callback.
 	 * IMPORTANT: This method is called on the background thread used by the
 	 * superclass.
 	 * @param res the Response that was loaded that needs to be unmarshaled.

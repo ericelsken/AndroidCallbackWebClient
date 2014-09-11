@@ -73,6 +73,9 @@ public class RequestHandler {
 	 * null.
 	 */
 	public RequestHandler(Context context, int id, Request req, RequestCallbacks callback) {
+		if(context == null) {
+			throw new NullPointerException("Context cannot be null.");
+		}
 		if(callback == null) {
 			throw new NullPointerException("RequestCallback cannot be null.");
 		}
@@ -148,6 +151,7 @@ public class RequestHandler {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
+			mManager.addRequest(mId, RequestHandler.this);
 			mCallback.onBeforeRequest(mId);
 		}
 

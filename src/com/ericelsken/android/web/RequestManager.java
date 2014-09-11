@@ -56,6 +56,22 @@ public class RequestManager {
 	}
 	
 	/**
+	 * Adds a RequestHandler to be managed by this object.
+	 * If a RequestHandler is already mapped by id, then this is a no-op and
+	 * false is returned. The same occurs if handler is null.
+	 * @param id the id to be mapped to handler.
+	 * @param handler the RequestHandler to be mapped by id.
+	 * @return true if handler was successfully added, false otherwise.
+	 */
+	public boolean addRequest(int id, RequestHandler handler) {
+		if(handler == null || containsRequest(id)) {
+			return false;
+		}
+		mArray.append(id, handler);
+		return true;
+	}
+	
+	/**
 	 * Returns whether or not the RequestHandler identified by id is currently
 	 * being managed by this class.
 	 * @param id the id of the RequestHandler to query for existence.
@@ -64,6 +80,15 @@ public class RequestManager {
 	 */
 	public boolean containsRequest(int id) {
 		return mArray.indexOfKey(id) >= 0;
+	}
+	
+	/**
+	 * Returns the RequestHandler mapped by id if it exists.
+	 * @param id the id of the RequestHandler to return.
+	 * @return the RequestHandler mapped to by id if it exists, null otherwise.
+	 */
+	public RequestHandler getHandler(int id) {
+		return mArray.get(id);
 	}
 	
 	/**
