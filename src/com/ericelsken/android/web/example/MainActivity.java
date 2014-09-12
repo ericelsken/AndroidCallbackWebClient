@@ -25,7 +25,7 @@ public class MainActivity extends Activity implements OnClickListener,
 	static {
 		//set simple cookie management for the entire process.
 		CookieManager manager = new CookieManager();
-		CookieHanlder.setDefault(manager);
+		CookieHandler.setDefault(manager);
 	}
 	
 	//request code values for request handling and loading.

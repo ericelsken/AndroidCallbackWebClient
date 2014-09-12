@@ -8,7 +8,7 @@ This class uses a Loader to load a get request (via the standard LoaderCallbacks
 If you clone this repository, it is a working application where MainActivity allows you to see the callbacks/loading in action.
 
 ###Using this repo as an Android library
-This repo is intented to be used as a library for another Android application required to make HTTP requests.
+This repo is intended to be used as a library for another Android application required to make HTTP requests.
 It is recommended to clone this repo outside of your workspace (if using Eclipse), then import the project into your workspace.
 To make this project a library (in Eclipse) click Project > Properties > Android (in left pane) > check the Is Library checkbox > OK.
 To enable another project to use this library (in Eclipse) click Project > Properties > Android (in left pane) > Add (in the Library section) > select this project > OK > OK.
@@ -32,7 +32,7 @@ Requests.
 For example, to enable simple cookie management for the entire application, the following line would suffice:
 ```java
 CookieManager manager = new CookieManager();
-CookieHanlder.setDefault(manager);
+CookieHandler.setDefault(manager);
 ```
 The MainActivity class described above does this in a static initialization block.
 
