@@ -29,7 +29,7 @@ import android.os.AsyncTask;
  * 
  * You can get the fields supplied to this class when constructed for use in
  * callbacks if need be. Additionally, you can set the ExceptionHandler of this 
- * handler at any time during the callback life-cycle as long as the calls is
+ * handler at any time during the callback life-cycle as long as the call is
  * made on the main-UI thread. 
  * This could be important if you want a specific type of
  * Exception handling to occur for this Request that is different from the
