@@ -70,6 +70,8 @@ processing needed in the onLoadFinished() callback.
 public class JSONUnmarshalingLoader 
 		extends UnmarshalingResponseLoader<JSONObject> {
 	
+	//constructor and other necessary stuff...
+	
 	@Override
 	protected JSONObject unmarshal(Response res) throws Exception {
 		if(res.getBody() == null) {
