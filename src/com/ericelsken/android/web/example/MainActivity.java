@@ -17,6 +17,7 @@ import com.ericelsken.android.web.R;
 import com.ericelsken.android.web.Request;
 import com.ericelsken.android.web.RequestCallbacks;
 import com.ericelsken.android.web.RequestHandler;
+import com.ericelsken.android.web.RequestManager;
 import com.ericelsken.android.web.Response;
 
 public class MainActivity extends Activity implements OnClickListener,
@@ -37,7 +38,7 @@ public class MainActivity extends Activity implements OnClickListener,
 	private WebView mWebView;
 	
 	@Override
-	public void onCreate(Bundle savedState) {
+	protected void onCreate(Bundle savedState) {
 		super.onCreate(savedState);
 		setContentView(R.layout.activity_main);
 		
@@ -56,7 +57,9 @@ public class MainActivity extends Activity implements OnClickListener,
 		final int id = v.getId();
 		if(id == R.id.button_request_success) {
 			//simple way to create a Request and handle it.
-			new Request.Builder(URI.create("http://www.example.com")).create().handle(this, WRC_SUCCESS, this);
+			if(!RequestManager.getInstance().containsRequest(WRC_SUCCESS)) {
+				new Request.Builder(URI.create("http://www.example.com")).create().handle(this, WRC_SUCCESS, this);
+			}
 			return;
 		}
 		if(id == R.id.button_request_failure) {

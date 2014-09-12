@@ -85,6 +85,7 @@ public class RequestHandler {
 		this.mContext = context;
 		this.mId = id;
 		this.mManager = RequestManager.getInstance();
+		this.mManager.addRequest(mId, RequestHandler.this);
 		this.mTask = new RequestTask();
 		this.mCallback = callback;
 		this.mExceptionHandler = this.mManager.getExceptionHandler();
@@ -150,7 +151,6 @@ public class RequestHandler {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			mManager.addRequest(mId, RequestHandler.this);
 			mCallback.onBeforeRequest(mId);
 		}
 

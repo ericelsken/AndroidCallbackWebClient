@@ -22,7 +22,7 @@ import com.ericelsken.android.web.content.ResponseLoader;
 /**
  * This class represents some request to be made to a remote http or https server. Most all of your interaction with
  * this library will be through this class, or at the very least, involve this class.
- * Instance of this class cannot be instantiated directly, and are instead created by using the request.Builder class.
+ * Instances of this class cannot be instantiated directly, and are instead created by using the request.Builder class.
  * Currently, Requests have the capability of setting a method (DELETE, GET, POST, PUT), the destination URI,
  * PUT and POST request bodies, and set a buffer size to use when writing and reading the request and response bodies,
  * and setting headers for the request and retrieving them from Response objects.
@@ -174,10 +174,12 @@ public class Request {
 			}
 		} finally {
 			try {
-				int status = conn.getResponseCode();
-				String message = conn.getResponseMessage();
-				if(status / 100 != 2) {
-					caught = new HttpException(status, message, body);
+				if(conn != null) {
+					int status = conn.getResponseCode();
+					String message = conn.getResponseMessage();
+					if(status / 100 != 2) {
+						caught = new HttpException(status, message, body);
+					}
 				}
 			} catch (IOException ex) {
 				caught = ex;
