@@ -87,3 +87,6 @@ public class JSONUnmarshalingLoader
 Calling getUnmarshalingException() returns the Exception thrown from
 unmarshal(), if it exists. This is to help differentiate the unmarshaling
 Exception from the Exception that could be held by the Response.
+
+###Documentation
+All code is documented such that you can use Javadoc to generate the documenation pages.
