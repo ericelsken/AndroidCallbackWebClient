@@ -51,6 +51,8 @@ public class Response {
 	
 	/**
 	 * Releases the internal reference to the body held by this class.
+	 * Future calls to getBody() will return null.
+	 * Future calls to isBodyReleased() will return true.
 	 */
 	public void releaseBody() {
 		isBodyReleased = true;
