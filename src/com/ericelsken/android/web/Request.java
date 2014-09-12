@@ -33,7 +33,7 @@ import com.ericelsken.android.web.content.ResponseLoader;
  * All Requests manage cookies using the CookieHandler class and its subclasses. Please see the CookieHandler,
  * CookieManager, and CookieStore class documentation in the java.net package for details on how to use cookies with
  * Requests.
- * It is recommended to call CookkieHandler.setDefault(new CookieManager()) in some app one-time initialization
+ * It is recommended to call CookieHandler.setDefault(new CookieManager()) in some app one-time initialization
  * code to enable simple handling of cookies.
  * 
  * The two main interactions of this class will be through newLoader() and handle().
