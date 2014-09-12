@@ -165,7 +165,7 @@ public class Request {
 			body = streamToString(conn.getInputStream());
 		} catch (Exception ex) {
 			caught = ex;
-			if(conn.getErrorStream() != null) {
+			if(conn != null && conn.getErrorStream() != null) {
 				try {
 					body = streamToString(conn.getErrorStream());
 				} catch (IOException inner) {
