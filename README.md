@@ -50,7 +50,7 @@ Very simply, the `RequestCallbacks` interface provides a contract for some imple
 In short, the callback implementation will receive the following callbacks from the events described below.
 Creating and handling `RequestHandler` objects MUST be done on the main-UI thread. The following callbacks will all be on the main-UI thread as well.
 
-1. `onBeforeRequest()` is called before just before the `Request` is executed on a background thread.
+1. `onBeforeRequest()` is called just before the `Request` is executed on a background thread.
 
 2. `onRequestDone()` is called when the `Request` is done executing in the background regardless of success or failure.
 
