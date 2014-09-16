@@ -45,7 +45,7 @@ Both `ResponseLoade` and `RequestHandler` will manage this call for you. If you 
 Multiple successive calls to `execute()` will return the same `Response` object that was returned upon the first call.
 In essence, this class is meant to used once to obtain on `Response` object.
 
-##The RequestCallbacks interface and Request life-cycle
+###The RequestCallbacks interface and Request life-cycle
 Very simply, the `RequestCallbacks` interface provides a contract for some implementation to receive callbacks from a `RequestHandler` during the life-cycle events of a `Request`.
 In short, the callback implementation will receive the following callbacks from the events described below.
 Creating and handling `RequestHandler` objects MUST be done on the main-UI thread. The following callbacks will all be on the main-UI thread as well.
