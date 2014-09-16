@@ -45,6 +45,23 @@ Both `ResponseLoade` and `RequestHandler` will manage this call for you. If you 
 Multiple successive calls to `execute()` will return the same `Response` object that was returned upon the first call.
 In essence, this class is meant to used once to obtain on `Response` object.
 
+##The RequestCallbacks interface and Request life-cycle
+Very simply, the `RequestCallbacks` interface provides a contract for some implementation to receive callbacks from a `RequestHandler` during the life-cycle events of a `Request`.
+In short, the callback implementation will receive the following callbacks from the events described below.
+Creating and handling `RequestHandler` objects MUST be done on the main-UI thread. The following callbacks will all be on the main-UI thread as well.
+
+1. `onBeforeRequest()` is called before just before the `Request` is executed on a background thread.
+
+2. `onRequestDone()` is called when the `Request` is done executing in the background regardless of success or failure.
+
+3. `onRequestSuccess()` is called after `onRequestDone()` if the `Request` has a 2xx status code and no other Exceptions occurred while making the `Request`.
+
+4. `onRequestException()` is called after `onRequestDone()` if the `Request` has a non-2xx status code, an Exception occurs while making the `Request`, or an Exception is thrown from `onRequestSuccess()`.
+
+5. `onRequestFinally()` is called after both `onRequestSuccess()` and `onRequestException()` return regardless of success or failure.
+
+Please see the `RequestCallbacks` documentation for the full details of the interface.
+
 ###The UnmarshalingResponseLoader class
 The
 [UnmarshalingResponseLoader](https://github.com/ericelsken/AndroidCallbackWebClient/blob/master/src/com/ericelsken/android/web/content/UnmarshalingResponseLoader.java)
