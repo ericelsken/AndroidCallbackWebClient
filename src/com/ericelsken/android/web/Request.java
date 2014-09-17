@@ -20,30 +20,32 @@ import android.os.Build;
 import com.ericelsken.android.web.content.ResponseLoader;
 
 /**
- * This class represents some request to be made to a remote http or https server. Most all of your interaction with
- * this library will be through this class, or at the very least, involve this class.
- * Instances of this class cannot be instantiated directly, and are instead created by using the request.Builder class.
- * Currently, Requests have the capability of setting a method (DELETE, GET, POST, PUT), the destination URI,
- * PUT and POST request bodies, and set a buffer size to use when writing and reading the request and response bodies,
- * and setting headers for the request and retrieving them from Response objects.
- * More capability is excepted in the future.
+ * This class represents some request to be made to a remote http or https server. Most all of your
+ * interaction with this library will be through this class, or at the very least, involve this class.
+ * Instances of this class cannot be instantiated directly, and are instead created by using the
+ * request.Builder class. Currently, Requests have the capability of setting a method (DELETE, GET,
+ * POST, PUT), the destination URI, PUT and POST request bodies, and set a buffer size to use when 
+ * writing and reading the request and response bodies, and setting headers for the request and 
+ * retrieving them from Response objects. More capability is excepted in the future.
  * 
  * Please see the Request.Builder documentation for how to create instances of this class.
  * 
- * All Requests manage cookies using the CookieHandler class and its subclasses. Please see the CookieHandler,
- * CookieManager, and CookieStore class documentation in the java.net package for details on how to use cookies with
- * Requests.
- * It is recommended to call CookieHandler.setDefault(new CookieManager()) in some app one-time initialization
- * code to enable simple handling of cookies.
+ * All Requests manage cookies using the CookieHandler class and its subclasses. Please see the 
+ * CookieHandler, CookieManager, and CookieStore class documentation in the java.net package for 
+ * details on how to use cookies with Requests.
+ * It is recommended to call CookieHandler.setDefault(new CookieManager()) in some app one-time
+ * initialization code to enable simple handling of cookies.
  * 
  * The two main interactions of this class will be through newLoader() and handle().
- * newLoader() creates and returns a new Loader<Response> that can be used in the typical fashion with a LoaderManager.
- * handle() creates, starts, and returns a new RequestHandler for use with a RequestCallback instance.
+ * newLoader() creates and returns a new Loader<Response> that can be used in the typical fashion 
+ * with a LoaderManager. handle() creates, starts, and returns a new RequestHandler for use with 
+ * a RequestCallback instance.
  * 
- * Note that the execute() method is where the networking occurs, and therefore CANNOT be called on the main-UI thread.
- * Both ResponseLoader and RequestHandler will manage this call for you. If you wish to use this class outside of 
- * ResponseLoader or RequestHandler, then you must handle calling execute() not on the main-UI thread.
- * Multiple successive calls to execute() will return the same Response object that was returned upon the first call.
+ * Note that the execute() method is where the networking occurs, and therefore CANNOT be called on
+ * the main-UI thread. Both ResponseLoader and RequestHandler will manage this call for you. If you
+ * wish to use this class outside of ResponseLoader or RequestHandler, then you must handle calling
+ * execute() not on the main-UI thread. Multiple successive calls to execute() will return the same
+ * Response object that was returned upon the first call.
  * In essence, this class is meant to used once to obtain on Response object.
  * 
  * @author Eric Elsken
@@ -92,7 +94,8 @@ public class Request {
 	 */
 	private Response response;
 	
-	//The following should be an exact copy of Params fields, all final, and all deep copied from a Params object.
+	//The following should be an exact copy of Params fields, all final, 
+	//and all deep copied from a Params object.
 	private final URI uri;
 	private final String data;
 	private final int method;
@@ -117,7 +120,8 @@ public class Request {
 	
 	/**
 	 * Creates, starts, and returns a new RequestHandler with the given id, Context, and RequestCallback.
-	 * Creates the RequestHandler via new RequestHandler(context, id, this, callback), starts the handler, and returns it.
+	 * Creates the RequestHandler via new RequestHandler(context, id, this, callback), starts the 
+	 * handler, and returns it.
 	 * @param context the Context of the RequestHandler.
 	 * @param id the id of the RequestHandler.
 	 * @param callback the RequestCallback object that receives callbacks from the RequestHandler.
@@ -142,7 +146,8 @@ public class Request {
 	/**
 	 * Executes this Request and returns the Response object obtained from the Request.
 	 * This method makes networking calls and thus CANNOT be called on the main-UI thread.
-	 * Multiple, successive calls to this method on the same instance will return the Response from the first call.
+	 * Multiple, successive calls to this method on the same instance will return the Response from
+	 * the first call.
 	 * @return the Response object obtained from executing this Request.
 	 */
 	public Response execute() {
