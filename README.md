@@ -14,20 +14,16 @@ To make this project a library (in Eclipse) click Project > Properties > Android
 To enable another project to use this library (in Eclipse) click Project > Properties > Android (in left pane) > Add (in the Library section) > select this project > OK > OK.
 
 ###The Request class
-The
-[Request](https://github.com/ericelsken/AndroidCallbackWebClient/blob/master/src/com/ericelsken/android/web/Request.java) 
-class represents some request to be made to a remote http or https server. Most all of your interaction with
-this library will be through this class, or at the very least, involve this class.
+The [Request](https://github.com/ericelsken/AndroidCallbackWebClient/blob/master/src/com/ericelsken/android/web/Request.java) class represents some request to be made to a remote http or https server.
+Most all of your interaction with this library will be through this class, or at the very least, involve this class.
 Instances of this class cannot be instantiated directly, and are instead created by using the request.Builder class.
-Currently, Requests have the capability of setting a method (DELETE, GET, POST, PUT), the destination URI,
-PUT and POST request bodies, and set a buffer size to use when writing and reading the request and response bodies,
-and setting headers for the request and retrieving them from Response objects.
+Currently, Requests have the capability of setting a method (DELETE, GET, POST, PUT), the destination URI, PUT and POST request bodies, and set a buffer size to use when writing and reading the request and response bodies, and setting headers for the request and retrieving them from Response objects.
 More capability is excepted in the future.
 
 Please see the `Request.Builder` documentation for how to create instances of this class.
 
-All Requests manage cookies using the `CookieHandler` class and its subclasses. Please see the `CookieHandler`,
-`CookieManager`, and `CookieStore` class documentation in the `java.net` package for details on how to use cookies with Requests.
+All Requests manage cookies using the `CookieHandler` class and its subclasses.
+Please see the `CookieHandler`, `CookieManager`, and `CookieStore` class documentation in the `java.net` package for details on how to use cookies with Requests.
 For example, to enable simple cookie management for the entire application, the following line would suffice:
 ```java
 CookieManager manager = new CookieManager();
@@ -40,15 +36,16 @@ The two main interactions of this class will be through `newLoader()` and `handl
 `handle()` creates, starts, and returns a new `RequestHandler` for use with a `RequestCallbacks` instance.
 
 Note that the `execute()` method is where the networking occurs, and therefore CANNOT be called on the main-UI thread.
-Both `ResponseLoade` and `RequestHandler` will manage this call for you. If you wish to use this class outside of 
-`ResponseLoader` or `RequestHandler`, then you must handle calling `execute()` on a thread other than the main-UI thread.
+Both `ResponseLoader` and `RequestHandler` will manage this call for you.
+If you wish to use this class outside of `ResponseLoader` or `RequestHandler`, then you must handle calling `execute()` on a thread other than the main-UI thread.
 Multiple successive calls to `execute()` will return the same `Response` object that was returned upon the first call.
 In essence, this class is meant to used once to obtain on `Response` object.
 
 ###The RequestCallbacks interface and Request life-cycle
 Very simply, the `RequestCallbacks` interface provides a contract for some implementation to receive callbacks from a `RequestHandler` during the life-cycle events of a `Request`.
 In short, the callback implementation will receive the following callbacks from the events described below.
-Creating and handling `RequestHandler` objects MUST be done on the main-UI thread. The following callbacks will all be on the main-UI thread as well.
+Creating and handling `RequestHandler` objects MUST be done on the main-UI thread.
+The following callbacks will all be on the main-UI thread as well.
 
 1. `onBeforeRequest()` is called just before the `Request` is executed on a background thread.
 
@@ -63,25 +60,16 @@ Creating and handling `RequestHandler` objects MUST be done on the main-UI threa
 Please see the `RequestCallbacks` documentation for the full details of the interface.
 
 ###The UnmarshalingResponseLoader class
-The
-[UnmarshalingResponseLoader](https://github.com/ericelsken/AndroidCallbackWebClient/blob/master/src/com/ericelsken/android/web/content/UnmarshalingResponseLoader.java)
-class is a utility class that allows for some processing to automatically take place
-on a Response once it is loaded by the superclass.
-The `nmarshal()` method provided by this class should be implemented such that
-it converts the Response to some other form for use elsewhere in the
-application. Note that the Response body will still be a string in memory
-after `unmarshal()` returns. If this is a lot of data or it is no longer needed,
-it may be helpful to call `Response.releaseBody()` in order to release that
-reference to free up that memory.
+The [UnmarshalingResponseLoader](https://github.com/ericelsken/AndroidCallbackWebClient/blob/master/src/com/ericelsken/android/web/content/UnmarshalingResponseLoader.java) class is a utility class that allows for some processing to automatically take place on a Response once it is loaded by the superclass.
+The `nmarshal()` method provided by this class should be implemented such that it converts the Response to some other form for use elsewhere in the application.
+Note that the Response body will still be a string in memory after `unmarshal()` returns.
+If this is a lot of data or it is no longer needed, it may be helpful to call `Response.releaseBody()` in order to release that reference to free up that memory.
 
-Subclasses of this class should implement `onReleaseResources()` in order to
-release anything created in `unmarshal()`. For instance, this could be closing
-a Cursor or something of that nature.
+Subclasses of this class should implement `onReleaseResources()` in order to release anything created in `unmarshal()`.
+For instance, this could be closing a Cursor or something of that nature.
 
-An example of this class would be to create a JSONObject from the `Response`
-body if you know the result of the `Request` is going to be some JSON content.
-Then by calling `getData()`, that JSONObject is ready for use without further
-processing needed in the `onLoadFinished()` callback.
+An example of this class would be to create a JSONObject from the `Response` body if you know the result of the `Request` is going to be some JSON content.
+Then by calling `getData()`, that JSONObject is ready for use without further processing needed in the `onLoadFinished()` callback.
 ```java
 public class JSONUnmarshalingLoader 
 		extends UnmarshalingResponseLoader<JSONObject> {
@@ -100,9 +88,8 @@ public class JSONUnmarshalingLoader
 }
 ```
 
-Calling `getUnmarshalingException()` returns the Exception thrown from
-`unmarshal()`, if it exists. This is to help differentiate the unmarshaling
-Exception from the Exception that could be held by the Response.
+Calling `getUnmarshalingException()` returns the Exception thrown from `unmarshal()`, if it exists.
+This is to help differentiate the unmarshaling Exception from the Exception that could be held by the Response.
 
 ###Documentation
 All code is documented such that you can use Javadoc to generate the documenation pages.
