@@ -46,7 +46,7 @@ import com.ericelsken.android.web.content.ResponseLoader;
  * wish to use this class outside of ResponseLoader or RequestHandler, then you must handle calling
  * execute() not on the main-UI thread. Multiple successive calls to execute() will return the same
  * Response object that was returned upon the first call.
- * In essence, this class is meant to used once to obtain on Response object.
+ * In essence, this class is meant to be used once to obtain one Response object.
  * 
  * @author Eric Elsken
  *
