@@ -39,7 +39,7 @@ Note that the `execute()` method is where the networking occurs, and therefore C
 Both `ResponseLoader` and `RequestHandler` will manage this call for you.
 If you wish to use this class outside of `ResponseLoader` or `RequestHandler`, then you must handle calling `execute()` on a thread other than the main-UI thread.
 Multiple successive calls to `execute()` will return the same `Response` object that was returned upon the first call.
-In essence, this class is meant to used once to obtain on `Response` object.
+In essence, this class is meant to be used once to obtain one `Response` object.
 
 ###The RequestCallbacks interface and Request life-cycle
 Very simply, the `RequestCallbacks` interface provides a contract for some implementation to receive callbacks from a `RequestHandler` during the life-cycle events of a `Request`.
